@@ -1,60 +1,88 @@
 import requests
 import json
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import scrolledtext, ttk
 
 # Base URL for the local Ollama API
 url = "http://localhost:11434/api/chat"
-model_name = "llama3.1"  # Only model being used
+#model_name = "llama3.1"  # Only model being used
 
 class LlamaGUI:
     def __init__(self):
         self.messages = []           # Stores the conversation history
-        self.dark_mode = False       # Dark mode toggle
 
         self.window = tk.Tk()
         self.window.title("Ollama Chat")
         self.window.geometry("700x700")
+        self.window.resizable(False, False)
 
         self.setup_ui()
 
     def setup_ui(self):
-        # Top-left frame for dark mode toggle
+        # Top-left frame for buttons
         top_frame = tk.Frame(self.window)
         top_frame.pack(anchor="nw", padx=10, pady=(10, 0))
 
-        self.dark_button = tk.Button(top_frame, text="🌗", command=self.toggle_dark_mode)
-        self.dark_button.pack(side="left")
+        #top_label = tk.Label(top_frame, text="Ollama Chat", font=("Arial", 12))
+        #top_label.pack(side="top")
+
+        # Dropdown menu with models
+        model_list = [
+            "llama3.1",
+            "llama3.2",
+            "llama3.3",
+            "gemma3",
+            "qwq",
+            "deepseek-r1",
+            "phi4",
+            "phi4-mini",
+            "mistral",
+            "moondream",
+            "starling-lm",
+            "codellama",
+            "llama2-uncensored",
+            "llava",
+            "granite3.2",
+        ]
+
+        self.model_var = tk.StringVar(value=model_list[0])
+
+        self.model_menu = tk.OptionMenu(top_frame, self.model_var, *model_list)
+        self.model_menu.pack(side="bottom", fill="both")
 
         # Chat history (read-only)
         self.text_area = scrolledtext.ScrolledText(
             self.window, width=80, height=25, wrap="word",
-            state="disabled", bg="white", fg="black"
+            state="disabled"
         )
-        self.text_area.pack(padx=10, pady=10)
+        self.text_area.pack(pady=5, fill="x")
 
         # Input field
         self.entry_field = tk.Text(
             self.window, width=80, height=4, wrap="word",
-            bg="white", fg="black"
+            bg="white"
         )
         self.entry_field.pack(padx=10, pady=5)
         self.entry_field.focus_set()
 
         # Send button
-        self.send_button = tk.Button(self.window, text="Send", command=self.send_message)
+        self.send_button = tk.Button(self.window, text="Send", command=self.send_message, borderwidth=2)
         self.send_button.pack(pady=5)
+
+        # Theme button
+        self.theme_button = tk.Button(top_frame, text="🌗", command=self.toggle_theme, borderwidth=2)
+        self.theme_button.pack(side="left")
+
+        # GPL button
+        self.gpl_button = tk.Button(top_frame, text="GPL License", command=self.show_gpl_license, borderwidth=2)
+        self.gpl_button.pack(side="left")
 
         # Key bindings
         self.entry_field.bind("<Return>", self.on_enter)
         self.entry_field.bind("<Shift-Return>", self.insert_newline)
 
-        # GPL button
-        self.gpl_button = tk.Button(top_frame, text="GPL License", command=self.show_gpl_license)
-        self.gpl_button.pack(side="right")
-
-        # Set Dark mode as default
-        self.toggle_dark_mode()
+        self.custom_theme = None
+        self.default_colors()
 
     def show_gpl_license(self):
         gpl_window = tk.Toplevel(self.window)
@@ -94,23 +122,69 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
         self.text_area.see(tk.END)
         self.text_area.config(state="disabled")
 
-    def toggle_dark_mode(self):
-        self.dark_mode = not self.dark_mode
-        bg_color = "grey9" if self.dark_mode else "Slate Blue"
-        fg_color = "#5ef75e" if self.dark_mode else "white"
-        window_bg = "black" if self.dark_mode else "Dark Slate Blue"
+    def toggle_theme(self):
+        if self.custom_theme:
+            self.default_colors()
 
-        self.text_area.config(bg=bg_color, fg=fg_color)
-        self.entry_field.config(bg=bg_color, fg=fg_color)
+        else:
+            self.load_custom_theme(filename="theme.json")
+
+    def load_custom_theme(self, filename):
+        try:
+            with open(filename, 'r') as f:
+                config = json.load(f)
+                self.custom_theme = config
+                self.apply_theme_config(config)
+
+        except FileNotFoundError:
+            print(f"Config file '{filename}' not found.")
+
+        except json.JSONDecodeError:
+            print(f"Invalid JSON in config file '{filename}'.")
+            self.apply_theme_config(self.custom_theme)
+
+    def default_colors(self):
+        self.custom_theme = None
+
+        text_area_bg = "#7d76d3"
+        text_fg = "#FFFFFF"
+        window_bg = "#5c549f"
+        button_bg = "#978dfd"
+        highlight_bg = "#5c549f"
+
         self.window.config(bg=window_bg)
-        self.gpl_button.config(bg=window_bg, fg=fg_color)
-        self.send_button.config(bg=window_bg, fg=fg_color)
-        self.dark_button.config(bg=window_bg, fg=fg_color)
+        self.text_area.config(bg=text_area_bg, fg=text_fg)
+        self.entry_field.config(bg=text_area_bg, fg=text_fg)
+
+        self.gpl_button.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg)
+
+        self.send_button.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg)
+
+        self.theme_button.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg)
+
+        self.model_menu.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg, justify="center")
+
+    def apply_theme_config(self, config):
+        self.window.config(bg=config.get('window_bg', '#5c549f'))
+        self.text_area.config(bg=config.get('text_area_bg', '#7d76d3'), fg=config.get('text_fg', '#FFFFFF'))
+
+        self.entry_field.config(bg=config.get('text_area_bg', '#7d76d3'), fg=config.get('text_fg', '#FFFFFF'))
+
+        self.gpl_button.config(bg=config.get('button_bg', '#978dfd'), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'))
+
+        self.send_button.config(bg=config.get('button_bg', '#978dfd'), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'))
+
+        self.theme_button.config(bg=config.get("button_bg", "#978dfd"), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'))
+
+        self.model_menu.config(bg=config.get('button_bg', '#978dfd'), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'), justify="center")
+
 
     def send_message(self):
         question = self.entry_field.get("1.0", tk.END).strip()
         if not question:
             return
+
+        model_name = self.model_var.get()
 
         self.insert_text(f"You: {question}\n\n")
         self.entry_field.delete("1.0", tk.END)
