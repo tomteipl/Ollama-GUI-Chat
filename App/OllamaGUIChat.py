@@ -1,11 +1,10 @@
 import requests
 import json
 import tkinter as tk
-from tkinter import scrolledtext, ttk
+from tkinter import scrolledtext
+import tkinter.font as tkFont
 
-# Base URL for the local Ollama API
 url = "http://localhost:11434/api/chat"
-#model_name = "llama3.1"  # Only model being used
 
 class LlamaGUI:
     def __init__(self):
@@ -13,18 +12,16 @@ class LlamaGUI:
 
         self.window = tk.Tk()
         self.window.title("Ollama Chat")
-        self.window.geometry("700x700")
-        self.window.resizable(False, False)
+        self.window.geometry("800x800")
+        self.window.resizable(True, True)
+        self.window.pack_propagate(False)
 
         self.setup_ui()
 
     def setup_ui(self):
         # Top-left frame for buttons
         top_frame = tk.Frame(self.window)
-        top_frame.pack(anchor="nw", padx=10, pady=(10, 0))
-
-        #top_label = tk.Label(top_frame, text="Ollama Chat", font=("Arial", 12))
-        #top_label.pack(side="top")
+        top_frame.pack(anchor="nw", pady=(0, 2))
 
         # Dropdown menu with models
         model_list = [
@@ -46,43 +43,51 @@ class LlamaGUI:
         ]
 
         self.model_var = tk.StringVar(value=model_list[0])
-
         self.model_menu = tk.OptionMenu(top_frame, self.model_var, *model_list)
-        self.model_menu.pack(side="bottom", fill="both")
+        self.model_menu.pack(side="right")
+        self.model_menu.config(width=10, anchor="w")
 
         # Chat history (read-only)
         self.text_area = scrolledtext.ScrolledText(
-            self.window, width=80, height=25, wrap="word",
+            self.window, width=80, height=25,wrap="word",
             state="disabled"
         )
-        self.text_area.pack(pady=5, fill="x")
+        self.text_area.pack(pady=(5, 0), fill="both", expand=True)
+        self.text_area.pack_propagate(False)
 
         # Input field
+        # Wrapper frame to prevent the input field from expanding
+        input_frame = tk.Frame(self.window, height=80)
+        input_frame.pack(padx=15, pady=4, fill="x")
+        input_frame.pack_propagate(False)
+
         self.entry_field = tk.Text(
-            self.window, width=80, height=4, wrap="word",
-            bg="white"
+            input_frame, wrap="word",
         )
-        self.entry_field.pack(padx=10, pady=5)
+        self.entry_field.pack(fill="both", expand=True)
         self.entry_field.focus_set()
 
         # Send button
-        self.send_button = tk.Button(self.window, text="Send", command=self.send_message, borderwidth=2)
+        self.send_button = tk.Button(self.window, text="🗨️ Send", command=self.send_message, borderwidth=2)
         self.send_button.pack(pady=5)
 
         # Theme button
-        self.theme_button = tk.Button(top_frame, text="🌗", command=self.toggle_theme, borderwidth=2)
+        self.theme_button = tk.Button(top_frame, text="🌗Toogle theme", command=self.toggle_theme, borderwidth=2)
         self.theme_button.pack(side="left")
 
         # GPL button
         self.gpl_button = tk.Button(top_frame, text="GPL License", command=self.show_gpl_license, borderwidth=2)
         self.gpl_button.pack(side="left")
 
-        # Key bindings
-        self.entry_field.bind("<Return>", self.on_enter)
-        self.entry_field.bind("<Shift-Return>", self.insert_newline)
 
+        # Key bindings
+        self.entry_field.bind("<Return>", self.keybindings)
+        self.entry_field.bind("<Shift-Return>", self.keybindings)
+        self.entry_field.bind("<Control-a>", self.keybindings)
+
+        # Toogle on startup
         self.custom_theme = None
-        self.default_colors()
+        self.load_custom_theme(filename="theme.json")
 
     def show_gpl_license(self):
         gpl_window = tk.Toplevel(self.window)
@@ -108,13 +113,19 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
 
         gpl_text.pack(padx=10, pady=10)
 
-    def insert_newline(self, event):
-        self.entry_field.insert(tk.INSERT, "\n")
-        return "break"
+    def keybindings(self, event):
+        if event.keysym == "Return" and not (event.state & 0x1):  # Enter
+            self.send_message()
+            return "break"
 
-    def on_enter(self, event):
-        self.send_button.invoke()
-        return "break"
+        elif event.keysym == "Return" and (event.state & 0x1):  # Shift+Enter
+            self.entry_field.insert(tk.END, "\n")
+            return "break"
+
+        elif event.keysym.lower() == "a" and (event.state & 0x4):  # Ctrl+A
+            self.entry_field.tag_add(tk.SEL, "1.0", tk.END)
+            return "break"
+
 
     def insert_text(self, content):
         self.text_area.config(state="normal")
@@ -138,10 +149,12 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
 
         except FileNotFoundError:
             print(f"Config file '{filename}' not found.")
+            self.default_colors()
 
         except json.JSONDecodeError:
             print(f"Invalid JSON in config file '{filename}'.")
             self.apply_theme_config(self.custom_theme)
+            self.default_colors()
 
     def default_colors(self):
         self.custom_theme = None
@@ -153,44 +166,92 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
         highlight_bg = "#5c549f"
 
         self.window.config(bg=window_bg)
-        self.text_area.config(bg=text_area_bg, fg=text_fg)
-        self.entry_field.config(bg=text_area_bg, fg=text_fg)
+        self.text_area.config(
+            bg=text_area_bg, fg=text_fg,
+            font=("", 12),
+        )
+        self.entry_field.config(
+            bg=text_area_bg, fg=text_fg,
+            font=("", 12),
+        )
 
-        self.gpl_button.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg)
+        self.gpl_button.config(
+            bg=button_bg, fg=text_fg, highlightbackground=highlight_bg,
+            pady=0.5,
+        )
 
-        self.send_button.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg)
+        self.send_button.config(
+            bg=button_bg, fg=text_fg, highlightbackground=highlight_bg
+        )
 
-        self.theme_button.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg)
+        self.theme_button.config(
+            bg=button_bg, fg=text_fg, highlightbackground=highlight_bg,
+            pady=0.5,
+        )
 
-        self.model_menu.config(bg=button_bg, fg=text_fg, highlightbackground=highlight_bg, justify="center")
+        self.model_menu.config(
+            bg=button_bg, fg=text_fg, highlightbackground=highlight_bg,
+            justify="center",
+            pady=0.5,
+        )
 
     def apply_theme_config(self, config):
-        self.window.config(bg=config.get('window_bg', '#5c549f'))
-        self.text_area.config(bg=config.get('text_area_bg', '#7d76d3'), fg=config.get('text_fg', '#FFFFFF'))
+        # get theme from JSON tree, example "buttons -> send_button -> bg: #9d604d"
+        self.window.config(
+            bg=config.get("window", {}).get('bg', '#5c549f')
+        )
+        self.text_area.config(
+            bg=config.get("text_area", {}).get("bg", "#7d76d3"),
+            fg=config.get("text_area", {}).get("fg", "#FFFFFF"),
+            font=("", config.get("text_area", {}).get("font_size", 12)),
+        )
 
-        self.entry_field.config(bg=config.get('text_area_bg', '#7d76d3'), fg=config.get('text_fg', '#FFFFFF'))
+        self.entry_field.config(
+            bg=config.get("entry_field", {}).get("bg", "#7d76d3"),
+            fg=config.get("entry_field", {}).get("fg", "#FFFFFF"),
+            font=("", config.get("entry_field", {}).get("font_size", 12)),
+        )
 
-        self.gpl_button.config(bg=config.get('button_bg', '#978dfd'), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'))
+        self.gpl_button.config(
+            bg=config.get("buttons", {}).get("gpl_button", {}).get("bg", "#978dfd"),
+            fg=config.get("buttons", {}).get("gpl_button", {}).get("fg", "#FFFFFF"),
+            highlightbackground=config.get("buttons", {}).get("gpl_button", {}).get("highlight_bg", "#5c549f"),
+            pady=0.5,
+        )
 
-        self.send_button.config(bg=config.get('button_bg', '#978dfd'), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'))
+        self.send_button.config(
+            bg=config.get("buttons", {}).get("send_button", {}).get("bg", "#978dfd"),
+            fg=config.get("buttons", {}).get("send_button", {}).get("fg", "#FFFFFF"),
+            highlightbackground=config.get("buttons", {}).get("send_button", {}).get("highlight_bg", "#5c549f"),
+        )
 
-        self.theme_button.config(bg=config.get("button_bg", "#978dfd"), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'))
+        self.theme_button.config(
+            bg=config.get("buttons", {}).get("theme_button", {}).get("bg", "#978dfd"),
+            fg=config.get("buttons", {}).get("theme_button", {}).get("fg", "#FFFFFF"),
+            highlightbackground=config.get("buttons", {}).get("theme_button", {}).get("highlight_bg", "#5c549f"),
+            pady=0.5,
+        )
 
-        self.model_menu.config(bg=config.get('button_bg', '#978dfd'), fg=config.get('text_fg', '#FFFFFF'), highlightbackground=config.get('highlight_bg', '#5c549f'), justify="center")
-
+        self.model_menu.config(
+            bg=config.get("model_menu", {}).get("bg", "#978dfd"),
+            fg=config.get("model_menu", {}).get("fg", "#FFFFFF"),
+            highlightbackground=config.get("model_menu", {}).get("highlight_bg", "#5c549f"),
+            justify="center",
+            pady=0.5,
+        )
 
     def send_message(self):
         question = self.entry_field.get("1.0", tk.END).strip()
         if not question:
             return
 
-        model_name = self.model_var.get()
+        model_name = self.model_var.get()           # get the selected model from the model_list []
 
-        self.insert_text(f"You: {question}\n\n")
-        self.entry_field.delete("1.0", tk.END)
+        self.insert_text(f"You: {question}\n\n")    # tag the user's question
+        self.entry_field.delete("1.0", tk.END)      # clear the input field
 
         self.messages.append({"role": "user", "content": question})
-        self.send_button.config(state=tk.DISABLED)
+        self.send_button.config(state=tk.DISABLED)  # disable the send button while waiting for the response
 
         payload = {
             "model": model_name,
@@ -205,6 +266,8 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
                 self.insert_text("AI: ")
                 self.window.update()
 
+                # full_reply "", needed for AI to remember the context of messages.
+                # Without this, every new message is considered as new chat or whatever.
                 full_reply = ""
                 for line in response.iter_lines(decode_unicode=True):
                     if line.strip():
@@ -227,7 +290,7 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
         except requests.exceptions.RequestException as e:
             self.insert_text(f"\nError sending request: {e}\n\n")
 
-        self.send_button.config(state=tk.NORMAL)
+        self.send_button.config(state=tk.NORMAL)        # enable send button after generated response
 
     def start(self):
         self.window.mainloop()

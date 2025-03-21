@@ -1,0 +1,38 @@
+{
+    "version": 3,
+    "buttons": {
+        "send_button": {
+            "bg": "#9d604d",
+            "fg": "#bed0e4",
+            "highlight_bg": "#9d5821"
+        },
+        "gpl_button": {
+            "bg": "#9d604d",
+            "fg": "#bed0e4",
+            "highlight_bg": "#9d5821"
+        },
+        "theme_button": {
+            "bg": "#9d604d",
+            "fg": "#bed0e4",
+            "highlight_bg": "#9d5821"
+        }
+    },
+    "window": {
+        "bg": "#9d5821"
+    },
+    "text_area": {
+        "bg": "#9d604d",
+        "fg": "#bed0e4",
+        "font_size": 12
+    },
+    "entry_field": {
+        "bg": "#9d604d",
+        "fg": "#bed0e4",
+        "font_size": 12
+    },
+    "model_menu": {
+        "bg": "#9d604d",
+        "fg": "#bed0e4",
+        "highlight_bg": "#9d5821"
+    }
+}
