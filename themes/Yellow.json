@@ -1,0 +1,55 @@
+{
+    "version": 3,
+    "buttons": {
+        "send_button": {
+            "bg": "#FFB200",
+            "fg": "#000",
+            "highlight_bg": "#EB5B00"
+        },
+        "gpl_button": {
+            "bg": "#FFB200",
+            "fg": "#000",
+            "highlight_bg": "#EB5B00"
+        },
+        "theme_button": {
+            "bg": "#FFB200",
+            "fg": "#000",
+            "highlight_bg": "#EB5B00"
+        },
+        "clear_button": {
+            "bg": "#370405",
+            "fg": "#000",
+            "highlight_bg": "#FFB200"
+        },
+        "save_button": {
+            "bg": "#0c5601",
+            "fg": "#000",
+            "highlight_bg": "#FFB200"
+        }
+    },
+    "window": {
+        "bg": "#EB5B00"
+    },
+    "text_area": {
+        "bg": "#FFB200",
+        "fg": "#000",
+        "highlight_bg": "#fff",
+        "font_size": 10
+    },
+    "entry_field": {
+        "bg": "#FFB200",
+        "fg": "#000",
+        "highlight_bg": "#fff",
+        "font_size": 10
+    },
+    "model_menu": {
+        "bg": "#FFB200",
+        "fg": "#000",
+        "highlight_bg": "#EB5B00"
+    },
+    "model_input": {
+        "bg": "#D91656",
+        "fg": "#000",
+        "highlight_bg": "#EB5B00"
+    }
+}

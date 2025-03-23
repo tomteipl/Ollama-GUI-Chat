@@ -15,6 +15,16 @@
             "bg": "#9d604d",
             "fg": "#bed0e4",
             "highlight_bg": "#9d5821"
+        },
+        "clear_button": {
+            "bg": "#370405",
+            "fg": "#bed0e4",
+            "highlight_bg": "#bed0e4"
+        },
+        "save_button": {
+            "bg": "#0c5601",
+            "fg": "#bed0e4",
+            "highlight_bg": "#bed0e4"
         }
     },
     "window": {
@@ -23,16 +33,23 @@
     "text_area": {
         "bg": "#9d604d",
         "fg": "#bed0e4",
-        "font_size": 12
+        "highlight_bg": "#000",
+        "font_size": 10
     },
     "entry_field": {
         "bg": "#9d604d",
         "fg": "#bed0e4",
-        "font_size": 12
+        "highlight_bg": "#000",
+        "font_size": 10
     },
     "model_menu": {
         "bg": "#9d604d",
         "fg": "#bed0e4",
+        "highlight_bg": "#9d5821"
+    },
+    "model_input": {
+        "bg": "#bed0e4",
+        "fg": "#9d604d",
         "highlight_bg": "#9d5821"
     }
 }
