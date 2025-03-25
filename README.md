@@ -1,2 +1,130 @@
+
 # Ollama-GUI-Chat
-Ollama GUI Chat app.
+
+![OGC default colors photo](src/Ollama_default_colors2.png)
+
+
+OGC (Ollama-GUI-Chat) is a simple chat app that uses
+**[Ollama](https://ollama.com/)** AI models
+installed on your hardware. You can use models predefined in DropdownMenu
+or simply type your custom model name in window.
+The app is written in **Python** using modules like
+`customtkinter`, `tkinter`, `requests` and `json`
+
+OGC sends a `payload` to your local server with `Ollama` model.
+By default its `http://localhost:11434/api/chat`.
+If you want to use external server, you can change the `url`
+in `OllamaGUIChat.py` file.
+
+```python
+url = "http://localhost:11434/api/chat"
+```
+
+## Table of Contents
+
+* **[Features][1]**
+* **[Installation][2]**
+* **[Customization][3]**
+* **[Themes][4]**
+
+[1]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#features
+[2]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#installation
+[3]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#customization
+[4]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#themes
+
+## Features
+
+* Talk with **Ollama** AI models with style using GUI
+* Choose model from list or type your **own** model name
+* Save chat history to file
+* Clear chat history
+* Light and Dark modes
+* **Most important**, customize style of whole app with simple `JSON` file !
+* Its free and open source. Use the source code to customize the app even more !
+
+## Installation
+
+## Customization
+
+![OGC default colors photo](src/Ollama_default_colors1.png)
+
+You can customize style of the app by editing `custom-theme.json`.
+**OGC** is searching `json` file in `theme` folder. The folder has to be
+in the same place as the `Ollama-GUI-Chat` file.
+
+Part of `custom-theme.json` file:
+
+```json
+{
+  "CTk": {
+    "fg_color": ["#5c549f", "#000"]
+  },
+  "CTkToplevel": {
+    "fg_color": ["#5c549f", "#000"]
+  },
+  "CTkFrame": {
+    "corner_radius": 6,
+    "border_width": 0,
+    "fg_color": ["gray90", "gray13"],
+    "top_fg_color": ["gray85", "gray16"],
+    "border_color": ["gray65", "gray28"]
+  },
+  "CTkButton": {
+    "corner_radius": 6,
+    "border_width": 1,
+    "fg_color": ["#978dfd", "#191a19"],
+    "hover_color": ["#6f68bd", "#4b4d4b"],
+    "border_color": ["#3a3666", "#02b508"],
+    "text_color": ["#FFFFFF", "#00ff04"],
+    "text_color_disabled": ["gray74", "gray60"]
+  },
+  "CTkLabel": {
+    "corner_radius": 0,
+    "fg_color": "transparent",
+    "text_color": ["#FFFFFF", "#00ff04"]
+```
+
+Its pretty easy and self explanatory. Just change the values
+and see the changes in the app.
+You can use `HEX` colors or `names` like `"green"`.
+
+Detailed usage of theme file you can find on
+official [CustomTkinter](https://customtkinter.tomschimansky.com/documentation/)
+page.
+
+You can change the list of models directly in `OllamaGUIChat.py` file
+
+```python
+model_list = [
+    "llama3.1",
+    "llama3.2",
+    "llama3.3",
+    "gemma3",
+    "qwq",
+    "deepseek-r1",
+    "phi4",
+    "phi4-mini",
+    "mistral",
+    "moondream",
+    "starling-lm",
+    "codellama",
+    "llama2-uncensored",
+    "llava",
+    "granite3.2",
+]
+```
+
+as well as the default Theme `PATH`
+
+```python
+APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
+THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
+ctk.set_default_color_theme(THEME_PATH)
+```
+
+## Themes
+
+You can find more themes in **[themes](themes/)** folder.
+Each theme has light and dark mode.
+
+Here you can see how they look:

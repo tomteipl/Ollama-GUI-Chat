@@ -1,3 +1,4 @@
 *.spec
 App/build/
 App/dist/
+App/packing/
