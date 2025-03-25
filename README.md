@@ -3,6 +3,10 @@
 
 ![OGC default colors photo](src/Ollama_default_colors2.png)
 
+![GitHub License](https://img.shields.io/github/license/tomteipl/Ollama-GUI-Chat)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/tomteipl/Ollama-GUI-Chat/total)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/tomteipl/Ollama-GUI-Chat)
+![GitHub Release](https://img.shields.io/github/v/release/tomteipl/Ollama-GUI-Chat)
 
 OGC (Ollama-GUI-Chat) is a simple chat app that uses
 **[Ollama](https://ollama.com/)** AI models
@@ -43,6 +47,12 @@ url = "http://localhost:11434/api/chat"
 * Its free and open source. Use the source code to customize the app even more !
 
 ## Installation
+
+* **Download** latest [release](https://github.com/tomteipl/Ollama-GUI-Chat/releases/latest)
+* **Download** `custom-theme.json` file
+* **Create** folder called `theme` in the same folder as `Ollama-GUI-Chat` file
+* **Put** `.json` file inside of `theme` folder
+* **Enjoy**
 
 ## Customization
 
@@ -122,9 +132,9 @@ THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
 ctk.set_default_color_theme(THEME_PATH)
 ```
 
-## Themes
+## Themes (WIP)
 
-You can find more themes in **[themes](themes/)** folder.
+~~You can find more themes in **[themes](themes/)** folder.~~
 Each theme has light and dark mode.
 
-Here you can see how they look:
+Here you can see how they look: (**WIP**)
