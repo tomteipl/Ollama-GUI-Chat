@@ -49,18 +49,17 @@ url = "http://localhost:11434/api/chat"
 ## Installation
 
 * **Download** latest [release](https://github.com/tomteipl/Ollama-GUI-Chat/releases/latest)
-* **Download** `custom-theme.json` file
-* **Create** folder called `theme` in the same folder as `Ollama-GUI-Chat` file
-* **Put** `.json` file inside of `theme` folder
+* **Extract** the archive
 * **Enjoy**
+
+*NOTE: `custom_theme.json` is located inside of `_internal/theme` folder.*
 
 ## Customization
 
 ![OGC default colors photo](src/Ollama_default_colors1.png)
 
 You can customize style of the app by editing `custom-theme.json`.
-**OGC** is searching `json` file in `theme` folder. The folder has to be
-in the same place as the `Ollama-GUI-Chat` file.
+**OGC** is searching for `json` file in `_internal/theme` folder.
 
 Part of `custom-theme.json` file:
 
