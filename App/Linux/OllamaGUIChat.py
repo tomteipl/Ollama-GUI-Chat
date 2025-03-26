@@ -33,7 +33,7 @@ class GPLLicense(ctk.CTkToplevel):
         super().__init__()
 
         self.title("GPL License")
-        self.geometry("500x350")
+        self.geometry("500x300")
 
         self.label = ctk.CTkLabel(self, text="""
 Copyright (c) 2025 by Kamil Wiśniewski <tomteipl@gmail.com>
@@ -53,7 +53,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.html>
         """,)
-        self.label.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.label.grid(row=0, column=0, sticky="nsew", padx=10)
 
 
 class OllamaGUIChat(ctk.CTk):
@@ -86,7 +86,7 @@ class OllamaGUIChat(ctk.CTk):
 
         self.gpl_button = ctk.CTkButton(top_frame, text="GPL License", command=self.open_gpl)
         self.gpl_button.grid(row=0, column=2, padx=(0,3))
-        self.gpl_button.configure(height=20, font=("", 13), width=10,)
+        self.gpl_button.configure(height=20, font=("", 13), width=10, border_width=0)
 
         self.model_menu_var = ctk.StringVar()
         self.model_menu_var.set(model_list[0])
@@ -112,21 +112,21 @@ class OllamaGUIChat(ctk.CTk):
 
         self.save_button = ctk.CTkButton(self, text="💾", command=self.save_chat)
         self.save_button.grid(row=2, column=0, sticky="e", padx=5)
-        self.save_button.configure(height=10, width=10, corner_radius=5, hover_color="#024f04")
+        self.save_button.configure(height=10, width=10, corner_radius=5, hover_color="#024f04", border_width=2)
 
         self.clear_button = ctk.CTkButton(self, text="💀", command=self.clear_chat)
         self.clear_button.grid(row=2, column=1, sticky="e", padx=(0,5))
-        self.clear_button.configure(height=10, width=10, corner_radius=5, hover_color="#3b0103")
+        self.clear_button.configure(height=10, width=10, corner_radius=5, hover_color="#3b0103", border_width=2)
 
         # lower panel
         self.input_field = ctk.CTkTextbox(self, height=100)
-        self.input_field.grid(row=3, column=0, padx=(5,0), pady=(5,5), sticky="nsew",)
+        self.input_field.grid(row=3, column=0, padx=5, pady=(5,5), sticky="nswe",)
         self.input_field.configure(wrap="word",)
         self.input_field.focus_set()
 
         self.send_button = ctk.CTkButton(self, text="📤", command=self.send_message)
-        self.send_button.grid(row=3, column=1, sticky="e", padx=(0,5), pady=(5,5))
-        self.send_button.configure(height=100, width=10, corner_radius=5)
+        self.send_button.grid(row=3, column=1, sticky="we", padx=(0,5), pady=(5,5))
+        self.send_button.configure(height=100, width=10, corner_radius=5, border_width=2)
 
         self.copyright_label = ctk.CTkLabel(self, text="Copyright (c) 2025 by Kamil Wiśniewski")
         self.copyright_label.grid(sticky="se", row=4, column=0, columnspan=2, padx=5)
