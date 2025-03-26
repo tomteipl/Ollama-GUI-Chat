@@ -3,10 +3,10 @@
 
 ![OGC default colors photo](src/Ollama_default_colors2.png)
 
-![GitHub License](https://img.shields.io/github/license/tomteipl/Ollama-GUI-Chat)
-![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/tomteipl/Ollama-GUI-Chat/total)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/tomteipl/Ollama-GUI-Chat)
-![GitHub Release](https://img.shields.io/github/v/release/tomteipl/Ollama-GUI-Chat)
+![GitHub License](https://img.shields.io/github/license/tomteipl/Ollama-GUI-Chat?style=for-the-badge&logo=apache&logoSize=auto&labelColor=%235c549f&color=orange)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/tomteipl/Ollama-GUI-Chat?style=for-the-badge&logo=githubactions&logoColor=black&logoSize=auto&labelColor=%235c549f&color=orange)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/tomteipl/Ollama-GUI-Chat?style=for-the-badge&logo=github&logoColor=black&logoSize=auto&labelColor=%235c549f&color=orange)
+![GitHub Release](https://img.shields.io/github/v/release/tomteipl/Ollama-GUi-Chat?sort=date&display_name=tag&style=for-the-badge&logo=codesandbox&logoColor=black&logoSize=auto&labelColor=%235c549f&color=orange)
 
 OGC (Ollama-GUI-Chat) is a simple chat app that uses
 **[Ollama](https://ollama.com/)** AI models
@@ -52,7 +52,8 @@ url = "http://localhost:11434/api/chat"
 * **Extract** the archive
 * **Enjoy**
 
-*NOTE: `custom_theme.json` is located inside of `_internal/theme` folder.*
+*[!NOTE]
+`custom_theme.json` is located inside of `_internal/theme` folder.*
 
 ## Customization
 
