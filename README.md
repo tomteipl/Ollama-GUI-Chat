@@ -136,7 +136,11 @@ ctk.set_default_color_theme(THEME_PATH)
 
 ## Themes (WIP)
 
-~~You can find more themes in **[themes](themes/)** folder.~~
+You can find more themes in **[themes](themes/)** folder.
 Each theme has light and dark mode.
 
 Here you can see how they look: (**WIP**)
+
+### Gruvbox
+
+![Gruvbox Theme](src/Ollama_gruvbox.png)
