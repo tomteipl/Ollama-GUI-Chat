@@ -32,11 +32,15 @@ url = "http://localhost:11434/api/chat"
 * **[Installation][2]**
 * **[Customization][3]**
 * **[Themes][4]**
+  * [Gruvbox][5]
+  * [Tokyo Night][6]
 
 [1]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#features
 [2]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#installation
 [3]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#customization
 [4]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#themes
+[5]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#gruvbox
+[6]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#tokyo-night
 
 ## Features
 
@@ -139,8 +143,13 @@ ctk.set_default_color_theme(THEME_PATH)
 You can find more themes in **[themes](themes/)** folder.
 Each theme has light and dark mode.
 
-Here you can see how they look: (**WIP**)
+>[!TIP]
+>Copy and paste whole code from any theme preset into `custom_theme.json`.
 
 ### Gruvbox
 
 ![Gruvbox Theme](src/Ollama_gruvbox.png)
+
+### Tokyo Night
+
+![Tokyo Night Theme](src/Ollama-tokyo_night.png)
