@@ -4,9 +4,13 @@ import json
 import customtkinter as ctk
 import os
 
+# TODO: Add `progressbar` to all jsons.
+# Fill README.md
+
+
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
-ctk.set_default_color_theme(THEME_PATH)
+
 
 #url = "http://localhost:11434/api/chat"
 
@@ -56,8 +60,18 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
         self.label.grid(row=0, column=0, sticky="nsew", padx=10)
 
 
+error_log = []
+
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
+
+        try:
+            ctk.set_default_color_theme(THEME_PATH)
+        except Exception as e:
+            ctk.set_default_color_theme("blue")
+            print(f"Error: {e}")
+            error_log.append(f"Error: {e}")
+
         super().__init__()
 
         ctk.set_appearance_mode("light")
@@ -125,7 +139,7 @@ class OllamaGUIChat(ctk.CTk):
         self.theme_switch.grid(row=0, column=1, padx=(0,5), sticky="e")
 
         # mid panel
-        self.chat_output = ctk.CTkTextbox(self, height=600)
+        self.chat_output = ctk.CTkTextbox(self, height=600, cursor="arrow")
         self.chat_output.grid(
             row=1,
             columnspan=2,
@@ -133,8 +147,9 @@ class OllamaGUIChat(ctk.CTk):
             pady=(5, 2),
             sticky="nsew",
         )
+        self.chat_output.insert("1.0", error_log)
         self.chat_output.configure(wrap="word", state="disabled",
-            font=("", 14)
+            font=("", 14,)
         )
 
         mid_frame = ctk.CTkFrame(self)
@@ -178,6 +193,9 @@ class OllamaGUIChat(ctk.CTk):
             font=("", 12), checkbox_width=18, checkbox_height=18
         )
 
+        self.progress_bar = ctk.CTkProgressBar(mid_frame2, mode="determinate",)
+        self.progress_bar.configure(width=150,)
+
         # lower panel
         self.input_field = ctk.CTkTextbox(self, height=100)
         self.input_field.grid(row=3, column=0, padx=5, pady=(5,5), sticky="nswe",)
@@ -205,8 +223,9 @@ class OllamaGUIChat(ctk.CTk):
     # functions
     def keybinds(self, event):
         if event.keysym == "Return" and not (event.state & 0x1):  # Enter
-            self.send_message()
-            return "break"
+            if self.send_button.cget("state") == "normal":
+                self.send_message()
+                return "break"
 
         elif event.keysym == "Return" and (event.state & 0x1):  # Shift+Enter
             self.input_field.insert("end", "\n")
@@ -273,6 +292,14 @@ class OllamaGUIChat(ctk.CTk):
             with open(file_path, "w") as f:
                 f.write(self.chat_output.get("1.0", "end"))
 
+    def show_progress(self):
+        self.progress_bar.grid(row=2, column=1, sticky="we")
+        self.progress_bar.start()
+
+    def hide_progress(self):
+        self.progress_bar.stop()
+        self.progress_bar.grid_forget()
+
     def send_message(self):
         question = self.input_field.get("1.0", "end").strip()
         if not question:
@@ -280,11 +307,12 @@ class OllamaGUIChat(ctk.CTk):
 
         model_name = self.model_menu_var.get()
 
-        self.insert_text(f"You: {question}\n\n")
+        self.insert_text(f"[You] :\n{question}\n\n")
         self.input_field.delete("1.0", "end")       # clear input field
 
         self.messages.append({"role": "user", "content": question})
         self.send_button.configure(state="disabled")        # disable send button
+
 
         payload = {
             "model": model_name,
@@ -298,7 +326,7 @@ class OllamaGUIChat(ctk.CTk):
             response = requests.post(url, json=payload, stream=True)
 
             if response.status_code == 200:
-                self.insert_text("AI: ")
+                self.insert_text("[AI] :\n")
                 #self.update()
 
                 # full_reply "", needed for AI to remember the context of messages.
@@ -310,6 +338,7 @@ class OllamaGUIChat(ctk.CTk):
                             data = json.loads(line)
                             content = data.get("message", {}).get("content", "")
                             full_reply += content
+                            self.show_progress()
                             self.insert_text(content)
                             self.update()
 
@@ -326,6 +355,7 @@ class OllamaGUIChat(ctk.CTk):
             self.insert_text(f"\nError sending request: {e}\n\n")
 
         self.send_button.configure(state="normal")
+        self.hide_progress()
 
 ollama_gui = OllamaGUIChat()
 ollama_gui.mainloop()

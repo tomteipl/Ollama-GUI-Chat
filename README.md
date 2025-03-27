@@ -159,6 +159,8 @@ Start: **27.03.2025**
 * [x] ~**Autoscroll**~
 * **Load chat from file**
 * **Add stop button**
+* **Add auto search for models**
+* **Add progress bar**
 * **Improve UI**
 
 ## License

@@ -55,6 +55,13 @@
     "text_color": ["#FFFFFF", "#00ff04"],
     "text_color_disabled": ["gray60", "gray45"]
   },
+  "CTkProgressBar": {
+    "corner_radius": 1000,
+    "border_width": 0,
+    "fg_color": ["#939BA2", "#4A4D50"],
+    "progress_color": ["#3a7ebf", "#00ff04"],
+    "border_color": ["gray", "gray"]
+  },
   "CTkOptionMenu": {
     "corner_radius": 6,
     "fg_color": ["#978dfd", "#191a19"],
