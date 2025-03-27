@@ -11,27 +11,6 @@ import os
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
 
-
-#url = "http://localhost:11434/api/chat"
-
-model_list = [
-    "llama3.1",
-    "llama3.2",
-    "llama3.3",
-    "gemma3",
-    "qwq",
-    "deepseek-r1",
-    "phi4",
-    "phi4-mini",
-    "mistral",
-    "moondream",
-    "starling-lm",
-    "codellama",
-    "llama2-uncensored",
-    "llava",
-    "granite3.2",
-]
-
 class GPLLicense(ctk.CTkToplevel):
     def __init__(self):
         super().__init__()
@@ -61,6 +40,7 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
 
 
 error_log = []
+model_list = []
 
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
@@ -77,6 +57,7 @@ class OllamaGUIChat(ctk.CTk):
         ctk.set_appearance_mode("light")
 
         self.messages = []
+        self.full_reply = ""
         self.gpl_opened = None
 
         self.title("Ollama GUI Chat")
@@ -89,6 +70,7 @@ class OllamaGUIChat(ctk.CTk):
 
     def setup_ui(self):
 
+
         # top panel buttons
         top_frame = ctk.CTkFrame(self)
         top_frame.grid(row=0, padx=5,pady=2, sticky="nswe")
@@ -99,7 +81,7 @@ class OllamaGUIChat(ctk.CTk):
         self.gpl_button.configure(height=20, font=("", 13), width=10, border_width=0)
 
         self.model_menu_var = ctk.StringVar()
-        self.model_menu_var.set(model_list[0])
+        #self.model_menu_var.set(model_list[0])
         self.model_menu_var.trace_add("write", self.on_model_change)
         self.model_menu = ctk.CTkOptionMenu(top_frame, variable=self.model_menu_var, values=model_list)
         self.model_menu.grid(row=0, column=1, padx=(0,3), pady=(1,0))
@@ -107,11 +89,7 @@ class OllamaGUIChat(ctk.CTk):
 
         self.custom_model_name = ctk.CTkEntry(top_frame,)
         self.custom_model_name.grid(row=0, column=2, padx=(0,3),)
-        self.custom_model_name.configure(
-            height=20,
-            font=("", 12),
-            placeholder_text="Custom model..."
-        )
+        self.custom_model_name.configure(height=20, font=("", 12), placeholder_text="Custom model...")
 
         top_frame2 = ctk.CTkFrame(self)
         top_frame2.grid(row=0, columnspan=2, padx=5, pady=2, sticky="e")
@@ -119,38 +97,20 @@ class OllamaGUIChat(ctk.CTk):
 
         self.host_url = ctk.CTkEntry(top_frame2)
         self.host_url.grid(row=0, column=0, padx=(20,3), sticky="e")
-        self.host_url.configure(
-            height=20,
-            width=230,
-            font=("", 12),
-            placeholder_text="Host URL..."
-        )
+        self.host_url.configure(height=20, width=230, font=("", 12), placeholder_text="Host URL...")
         self.host_url.insert(0 ,"http://localhost:11434")
 
         self.theme_var = ctk.StringVar(value="off")
-        self.theme_switch = ctk.CTkSwitch(
-            top_frame2,
-            text="light/dark mode",
-            variable=self.theme_var,
-            onvalue="on",
-            offvalue="off",
-            command=self.theme_modes,
-        )
+        self.theme_switch = ctk.CTkSwitch(top_frame2, text="light/dark mode", variable=self.theme_var, onvalue="on", offvalue="off", command=self.theme_modes,)
         self.theme_switch.grid(row=0, column=1, padx=(0,5), sticky="e")
 
         # mid panel
+        self.chat_font_var = ctk.StringVar()
+        self.chat_font_var.set(value="14")
         self.chat_output = ctk.CTkTextbox(self, height=600, cursor="arrow")
-        self.chat_output.grid(
-            row=1,
-            columnspan=2,
-            padx=5,
-            pady=(5, 2),
-            sticky="nsew",
-        )
+        self.chat_output.grid(row=1, columnspan=2, padx=5, pady=(5, 2), sticky="nsew",)
         self.chat_output.insert("1.0", error_log)
-        self.chat_output.configure(wrap="word", state="disabled",
-            font=("", 14,)
-        )
+        self.chat_output.configure(wrap="word", state="disabled", font=("", int(self.chat_font_var.get())))
 
         mid_frame = ctk.CTkFrame(self)
         mid_frame.grid(row=2, columnspan=2, sticky="e")
@@ -160,38 +120,31 @@ class OllamaGUIChat(ctk.CTk):
         mid_frame2.grid(row=2, sticky="w")
         mid_frame2.configure(fg_color="transparent")
 
-        self.save_button = ctk.CTkButton(mid_frame, text="💾", command=self.save_chat)
-        self.save_button.grid(row=2, column=1, padx=5,)
-        self.save_button.configure(
-            height=10,
-            width=10,
-            corner_radius=5,
-            hover_color="#024f04",
-            border_width=2
-        )
+        self.save_button = ctk.CTkButton(mid_frame, text="💾 Save", command=self.save_chat)
+        self.save_button.grid(row=2, column=0, padx=5,)
+        self.save_button.configure(height=10, width=15, corner_radius=5, hover_color="#024f04", border_width=2)
+
+        self.load_button = ctk.CTkButton(mid_frame, text="📂 Load", command=self.load_chat)
+        self.load_button.grid(row=2, column=1, padx=(0,5),)
+        self.load_button.configure(height=10, width=15, corner_radius=5, hover_color="#1f538d", border_width=2)
 
         self.clear_button = ctk.CTkButton(mid_frame, text="💀", command=self.clear_chat)
         self.clear_button.grid(row=2, column=2, padx=(0,5),)
-        self.clear_button.configure(
-            height=10,
-            width=10,
-            corner_radius=5,
-            hover_color="#3b0103",
-            border_width=2
-        )
+        self.clear_button.configure(height=10, width=10, corner_radius=5, hover_color="#3b0103", border_width=2)
 
         self.autoscroll_var = ctk.StringVar(value="on")
-        self.autoscroll_box = ctk.CTkCheckBox(
-            mid_frame2,
-            text="Autoscroll",
-            variable=self.autoscroll_var,
-            onvalue="on",
-            offvalue="off",
-        )
-        self.autoscroll_box.grid(row=2, column=0, padx=5,)
-        self.autoscroll_box.configure(
-            font=("", 12), checkbox_width=18, checkbox_height=18
-        )
+        self.autoscroll_box = ctk.CTkCheckBox(mid_frame2, text="Autoscroll", variable=self.autoscroll_var, onvalue="on", offvalue="off",)
+        self.autoscroll_box.grid(row=2, column=0, padx=(5,0),)
+        self.autoscroll_box.configure(font=("", 12), checkbox_width=18, checkbox_height=18)
+
+        self.increase_font = ctk.CTkButton(mid_frame2, text="🔺", command=lambda: self.change_font_size(1))
+        self.increase_font.grid(row=2,column=1,)
+        self.increase_font.configure(width=10, height=10, corner_radius=5, border_width=2)
+
+        self.decrease_font = ctk.CTkButton(mid_frame2, text="🔻", command=lambda: self.change_font_size(-1))
+        self.decrease_font.grid(row=2,column=2, padx=(0,5))
+        self.decrease_font.configure(width=10, height=10, corner_radius=5, border_width=2)
+
 
         self.progress_bar = ctk.CTkProgressBar(mid_frame2, mode="determinate",)
         self.progress_bar.configure(width=150,)
@@ -204,11 +157,9 @@ class OllamaGUIChat(ctk.CTk):
 
         self.send_button = ctk.CTkButton(self, text="📤", command=self.send_message)
         self.send_button.grid(row=3, column=1, sticky="we", padx=(0,5), pady=(5,5))
-        self.send_button.configure(
-            height=100, width=10, corner_radius=5, border_width=2
-        )
+        self.send_button.configure(height=100, width=10, corner_radius=5, border_width=2)
 
-        self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 1.4")
+        self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 1.5")
         self.copyright_label.grid(sticky="se", row=4, column=0, columnspan=2, padx=5)
         self.copyright_label.configure(font=("", 10))
 
@@ -219,6 +170,8 @@ class OllamaGUIChat(ctk.CTk):
         self.input_field.bind("<Control-a>", self.keybinds)
         self.input_field.bind("<Return>", self.keybinds)
 
+
+        self.check_existing_models()
 
     # functions
     def keybinds(self, event):
@@ -234,6 +187,16 @@ class OllamaGUIChat(ctk.CTk):
         elif event.keysym.lower() == "a" and (event.state & 0x4):  # Ctrl+A
             self.input_field.tag_add("sel", "1.0", "end")
             return "break"
+
+    def change_font_size(self, increment):
+        font_size = int(self.chat_font_var.get()) + increment
+        if font_size < 6:
+            font_size = 6
+        elif font_size > 48:
+            font_size = 48
+
+        self.chat_font_var.set(value=f"{font_size}")
+        self.chat_output.configure(font=("", font_size))
 
     def insert_text(self, content):
         self.chat_output.configure(state="normal")
@@ -290,15 +253,39 @@ class OllamaGUIChat(ctk.CTk):
 
         if file_path:
             with open(file_path, "w") as f:
-                f.write(self.chat_output.get("1.0", "end"))
+                for message in self.messages:
+                    f.write(f"{message['role']} : {message['content']}\n")
+
+    def load_chat(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+        with open(file_path, "r") as f:
+            for line in f.readlines():
+                self.messages.append({"role": "assistant", "content": line})
 
     def show_progress(self):
-        self.progress_bar.grid(row=2, column=1, sticky="we")
+        self.progress_bar.grid(row=2, column=3, sticky="we")
         self.progress_bar.start()
 
     def hide_progress(self):
         self.progress_bar.stop()
         self.progress_bar.grid_forget()
+
+    # checks for installed LLMs.
+    def check_existing_models(self) -> None:
+        try:
+            api_url = self.host_url.get().rstrip('/api/chat')
+            response = requests.get(
+                url=api_url + "/api/tags"
+            )
+            response.raise_for_status()
+            data = response.json()
+            model_list.extend([model["name"] for model in data["models"]])
+            self.model_menu_var.set(model_list[0])
+            self.refresh_model_list()
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error while checking models: {e}")
+            self.insert_text(f"Error while checking models: {e}\n\n")
 
     def send_message(self):
         question = self.input_field.get("1.0", "end").strip()
@@ -331,7 +318,7 @@ class OllamaGUIChat(ctk.CTk):
 
                 # full_reply "", needed for AI to remember the context of messages.
                 # Without this, every new message is considered as new chat or whatever.
-                full_reply = ""
+                full_reply= ""
                 for line in response.iter_lines(decode_unicode=True):
                     if line.strip():
                         try:

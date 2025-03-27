@@ -2,7 +2,7 @@
     <h1> Ollama-GUI-Chat </h1>
 </div>
 
-![OGC default colors photo](assets/Ollama_default_colors4.png)
+![OGC default colors photo](assets/Ollama_default_colors5.png)
 
 ![GitHub License](https://img.shields.io/github/license/tomteipl/Ollama-GUI-Chat?style=for-the-badge&logo=apache&logoSize=auto&labelColor=%235c549f&color=orange)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/tomteipl/Ollama-GUI-Chat?style=for-the-badge&logo=githubactions&logoColor=black&logoSize=auto&labelColor=%235c549f&color=orange)
@@ -43,11 +43,12 @@ there is inserted default URL.
 
 ## 🔥 Features
 
-* ✏️ Talk with **Ollama** AI models with style using GUI.
+* ✏️ Talk with **Ollama** AI models with style using light GUI app.
 * 📂 Choose a model from the list or type your **own** model name.
-* 🔖 Save chat history to a file.
-* 💣 Clear chat history.
+* 🔖 Save and Clear chat history.
+* 🍻 Load chat from a saved file and continue your conversation.
 * 🌓 Light and Dark modes.
+* 🗽 Auto detect your LLMs.
 * 🌹 **Most important**, customize the style of the whole app with a simple `JSON` file !
 * 🎁 Its free and open-source. Use the source code to customize the app even more !
 * And **more** in development...
@@ -67,7 +68,7 @@ there is inserted default URL.
 
 ## 💻 Customization
 
-![OGC default colors photo](assets/Ollama_default_colors1.png)
+![OGC default colors photo](assets/Ollama_default_colors7.png)
 
 You can customize the style of the app by editing `custom-theme.json`.
 **OGC** searches for the `json` file in the `_internal/theme/` folder.
@@ -105,34 +106,11 @@ Detailed usage of theme file can be found on
 the official [CustomTkinter](https://customtkinter.tomschimansky.com/documentation/)
 page.
 
-You can change the list of models directly in the `OllamaGUIChat.py` file
-
-```python
-model_list = [
-    "llama3.1",
-    "llama3.2",
-    "llama3.3",
-    "gemma3",
-    "qwq",
-    "deepseek-r1",
-    "phi4",
-    "phi4-mini",
-    "mistral",
-    "moondream",
-    "starling-lm",
-    "codellama",
-    "llama2-uncensored",
-    "llava",
-    "granite3.2",
-]
-```
-
-as well as the default Theme `PATH`
+If you wish you can modify `PATHs` to app and theme
 
 ```python
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
-ctk.set_default_color_theme(THEME_PATH)
 ```
 
 ## 🎨 Themes (WIP)
@@ -145,23 +123,26 @@ Each theme has light and dark mode.
 
 ### Gruvbox
 
-![Gruvbox Theme](assets/Ollama_gruvbox_1.png)
+![Gruvbox Theme](assets/Ollama_gruvbox_2.png)
 
 ### Tokyo Night
 
-![Tokyo Night Theme](assets/Ollama-tokyo_night_1.png)
+![Tokyo Night Theme](assets/Ollama-tokyo_night_2.png)
 
 ## 📆 Roadmap
 
 Start: **27.03.2025**
 
+*Part 1:*
+
 * [x] ~**Host URL input**, let user enter custom URL.~
 * [x] ~**Autoscroll**~
-* **Load chat from file**
-* **Add stop button**
-* **Add auto search for models**
-* **Add progress bar**
+* [x] ~**Load chat from file**~
+* 📌 **Add stop button** (WIP)
+* [x] ~**Add auto search for models**~
+* [x] ~**Add progress bar**~
 * **Improve UI**
+* **Change theme handling**
 
 ## License
 

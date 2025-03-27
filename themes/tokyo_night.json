@@ -34,7 +34,7 @@
     "text_color": ["#e6e7ed", "#24283b"],
     "placeholder_text_color": ["#3c3836", "#24283b"]
   },
-      "CTkCheckBox": {
+  "CTkCheckBox": {
     "corner_radius": 6,
     "border_width": 3,
     "fg_color": ["#3a7ebf", "#1f538d"],
@@ -54,6 +54,13 @@
     "button_hover_color": ["#385f0d", "#8f5e15"],
     "text_color": ["#282828", "#a9b1d6"],
     "text_color_disabled": ["gray60", "gray45"]
+  },
+  "CTkProgressBar": {
+    "corner_radius": 1000,
+    "border_width": 0,
+    "fg_color": ["#939BA2", "#4A4D50"],
+    "progress_color": ["#5a3e8e", "#bb9af7"],
+    "border_color": ["gray", "gray"]
   },
   "CTkOptionMenu": {
     "corner_radius": 6,
