@@ -19,12 +19,8 @@ like `customtkinter`, `tkinter`, `requests`, and `json`.
 
 OGC sends a `payload` to your local server with the `Ollama` model.
 By default, it's `http://localhost:11434/api/chat`.
-If you want to use an external server,
-you can change the `url` in the `OllamaGUIChat.py` file.
-
-```python
-url = "http://localhost:11434/api/chat"
-```
+You can enter custom `URL`, when you open the app
+there is inserted default URL.
 
 ## Table of Contents
 

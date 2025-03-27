@@ -8,7 +8,7 @@ APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
 ctk.set_default_color_theme(THEME_PATH)
 
-url = "http://localhost:11434/api/chat"
+#url = "http://localhost:11434/api/chat"
 
 model_list = [
     "llama3.1",
@@ -77,46 +77,106 @@ class OllamaGUIChat(ctk.CTk):
 
         # top panel buttons
         top_frame = ctk.CTkFrame(self)
-        top_frame.grid(padx=5,pady=2, sticky="nswe")
+        top_frame.grid(row=0, padx=5,pady=2, sticky="nswe")
         top_frame.configure(fg_color="transparent")
 
-        #self.theme_button = ctk.CTkButton(top_frame, text="🌗Toogle theme",)
-        #self.theme_button.grid(row=0, column=1, padx=(0,3))
-        #self.theme_button.configure(height=20, font=("", 12), width=10)
-
         self.gpl_button = ctk.CTkButton(top_frame, text="GPL License", command=self.open_gpl)
-        self.gpl_button.grid(row=0, column=2, padx=(0,3))
+        self.gpl_button.grid(row=0, column=0, padx=(0,3))
         self.gpl_button.configure(height=20, font=("", 13), width=10, border_width=0)
 
         self.model_menu_var = ctk.StringVar()
         self.model_menu_var.set(model_list[0])
         self.model_menu_var.trace_add("write", self.on_model_change)
         self.model_menu = ctk.CTkOptionMenu(top_frame, variable=self.model_menu_var, values=model_list)
-        self.model_menu.grid(row=0, column=3, padx=(0,3), pady=(1,0))
+        self.model_menu.grid(row=0, column=1, padx=(0,3), pady=(1,0))
         self.model_menu.configure(height=23, font=("", 12), dynamic_resizing=True,)
 
         self.custom_model_name = ctk.CTkEntry(top_frame,)
-        self.custom_model_name.grid(row=0, column=4, padx=(0,3),)
-        self.custom_model_name.configure(height=20, font=("", 12), placeholder_text="Custom model...")
+        self.custom_model_name.grid(row=0, column=2, padx=(0,3),)
+        self.custom_model_name.configure(
+            height=20,
+            font=("", 12),
+            placeholder_text="Custom model..."
+        )
+
+        top_frame2 = ctk.CTkFrame(self)
+        top_frame2.grid(row=0, columnspan=2, padx=5, pady=2, sticky="e")
+        top_frame2.configure(fg_color="transparent")
+
+        self.host_url = ctk.CTkEntry(top_frame2)
+        self.host_url.grid(row=0, column=0, padx=(20,3), sticky="e")
+        self.host_url.configure(
+            height=20,
+            width=230,
+            font=("", 12),
+            placeholder_text="Host URL..."
+        )
+        self.host_url.insert(0 ,"http://localhost:11434")
 
         self.theme_var = ctk.StringVar(value="off")
-        self.theme_switch = ctk.CTkSwitch(self, text="light/dark mode", variable=self.theme_var, onvalue="on", offvalue="off", command=self.theme_modes)
-        self.theme_switch.grid(row=0, columnspan=2, padx=(0,5), sticky="e")
+        self.theme_switch = ctk.CTkSwitch(
+            top_frame2,
+            text="light/dark mode",
+            variable=self.theme_var,
+            onvalue="on",
+            offvalue="off",
+            command=self.theme_modes,
+        )
+        self.theme_switch.grid(row=0, column=1, padx=(0,5), sticky="e")
 
         # mid panel
         self.chat_output = ctk.CTkTextbox(self, height=600)
-        self.chat_output.grid(row=1, columnspan=2, padx=5, pady=(5,2), sticky="nsew",)
+        self.chat_output.grid(
+            row=1,
+            columnspan=2,
+            padx=5,
+            pady=(5, 2),
+            sticky="nsew",
+        )
         self.chat_output.configure(wrap="word", state="disabled",
             font=("", 14)
         )
 
-        self.save_button = ctk.CTkButton(self, text="💾", command=self.save_chat)
-        self.save_button.grid(row=2, column=0, sticky="e", padx=5)
-        self.save_button.configure(height=10, width=10, corner_radius=5, hover_color="#024f04", border_width=2)
+        mid_frame = ctk.CTkFrame(self)
+        mid_frame.grid(row=2, columnspan=2, sticky="e")
+        mid_frame.configure(fg_color="transparent")
 
-        self.clear_button = ctk.CTkButton(self, text="💀", command=self.clear_chat)
-        self.clear_button.grid(row=2, column=1, sticky="e", padx=(0,5))
-        self.clear_button.configure(height=10, width=10, corner_radius=5, hover_color="#3b0103", border_width=2)
+        mid_frame2 = ctk.CTkFrame(self)
+        mid_frame2.grid(row=2, sticky="w")
+        mid_frame2.configure(fg_color="transparent")
+
+        self.save_button = ctk.CTkButton(mid_frame, text="💾", command=self.save_chat)
+        self.save_button.grid(row=2, column=1, padx=5,)
+        self.save_button.configure(
+            height=10,
+            width=10,
+            corner_radius=5,
+            hover_color="#024f04",
+            border_width=2
+        )
+
+        self.clear_button = ctk.CTkButton(mid_frame, text="💀", command=self.clear_chat)
+        self.clear_button.grid(row=2, column=2, padx=(0,5),)
+        self.clear_button.configure(
+            height=10,
+            width=10,
+            corner_radius=5,
+            hover_color="#3b0103",
+            border_width=2
+        )
+
+        self.autoscroll_var = ctk.StringVar(value="on")
+        self.autoscroll_box = ctk.CTkCheckBox(
+            mid_frame2,
+            text="Autoscroll",
+            variable=self.autoscroll_var,
+            onvalue="on",
+            offvalue="off",
+        )
+        self.autoscroll_box.grid(row=2, column=0, padx=5,)
+        self.autoscroll_box.configure(
+            font=("", 12), checkbox_width=18, checkbox_height=18
+        )
 
         # lower panel
         self.input_field = ctk.CTkTextbox(self, height=100)
@@ -126,9 +186,11 @@ class OllamaGUIChat(ctk.CTk):
 
         self.send_button = ctk.CTkButton(self, text="📤", command=self.send_message)
         self.send_button.grid(row=3, column=1, sticky="we", padx=(0,5), pady=(5,5))
-        self.send_button.configure(height=100, width=10, corner_radius=5, border_width=2)
+        self.send_button.configure(
+            height=100, width=10, corner_radius=5, border_width=2
+        )
 
-        self.copyright_label = ctk.CTkLabel(self, text="Copyright (c) 2025 by Kamil Wiśniewski")
+        self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 1.4")
         self.copyright_label.grid(sticky="se", row=4, column=0, columnspan=2, padx=5)
         self.copyright_label.configure(font=("", 10))
 
@@ -158,6 +220,13 @@ class OllamaGUIChat(ctk.CTk):
         self.chat_output.configure(state="normal")
         self.chat_output.insert("end", content)
         self.chat_output.configure(state="disabled")
+
+        try:
+            if self.autoscroll_var.get() == "on":
+                self.chat_output.see("end")
+
+        except Exception as e:
+            print(f"Error: {e}")
 
     def on_model_change(self, *args):
         self.messages = []
@@ -223,12 +292,14 @@ class OllamaGUIChat(ctk.CTk):
             "stream": True
         }
 
+        url = f"{self.host_url.get().rstrip('/api/chat')}/api/chat"
+
         try:
             response = requests.post(url, json=payload, stream=True)
 
             if response.status_code == 200:
                 self.insert_text("AI: ")
-                self.update()
+                #self.update()
 
                 # full_reply "", needed for AI to remember the context of messages.
                 # Without this, every new message is considered as new chat or whatever.

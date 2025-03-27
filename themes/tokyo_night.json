@@ -34,6 +34,16 @@
     "text_color": ["#e6e7ed", "#24283b"],
     "placeholder_text_color": ["#3c3836", "#24283b"]
   },
+      "CTkCheckBox": {
+    "corner_radius": 6,
+    "border_width": 3,
+    "fg_color": ["#3a7ebf", "#1f538d"],
+    "border_color": ["#3E454A", "#949A9F"],
+    "hover_color": ["#325882", "#14375e"],
+    "checkmark_color": ["#DCE4EE", "gray90"],
+    "text_color": ["gray14", "gray84"],
+    "text_color_disabled": ["gray60", "gray45"]
+  },
   "CTkSwitch": {
     "corner_radius": 1000,
     "border_width": 3,
