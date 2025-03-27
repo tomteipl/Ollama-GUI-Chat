@@ -10,17 +10,17 @@
 ![GitHub Release](https://img.shields.io/github/v/release/tomteipl/Ollama-GUi-Chat?sort=date&display_name=tag&style=for-the-badge&logo=codesandbox&logoColor=black&logoSize=auto&labelColor=%235c549f&color=orange)
 ![Static Badge Python](https://img.shields.io/badge/Python-100%25-dark?style=for-the-badge&logo=python&logoColor=black&logoSize=auto&labelColor=%235c549f&color=orange)
 
-OGC (Ollama-GUI-Chat) is a simple chat app that uses
-**[Ollama](https://ollama.com/)** AI models
-installed on your hardware. You can use models predefined in DropdownMenu
-or simply type your custom model name in window.
-The app is written in **Python** using modules like
-`customtkinter`, `tkinter`, `requests` and `json`
+OGC (Ollama-GUI-Chat) is a simple chat app that uses **[Ollama](https://ollama.com/)**
+AI models installed on your hardware.
+You can use models predefined in the dropdown menu
+or simply type your custom model name in the window.
+The app is written in **Python** using modules
+like `customtkinter`, `tkinter`, `requests`, and `json`.
 
-OGC sends a `payload` to your local server with `Ollama` model.
-By default its `http://localhost:11434/api/chat`.
-If you want to use external server, you can change the `url`
-in `OllamaGUIChat.py` file.
+OGC sends a `payload` to your local server with the `Ollama` model.
+By default, it's `http://localhost:11434/api/chat`.
+If you want to use an external server,
+you can change the `url` in the `OllamaGUIChat.py` file.
 
 ```python
 url = "http://localhost:11434/api/chat"
@@ -34,6 +34,8 @@ url = "http://localhost:11434/api/chat"
 * **[Themes][4]**
   * [Gruvbox][5]
   * [Tokyo Night][6]
+* **[Roadmap][7]**
+* **[License](LICENSE)**
 
 [1]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#features
 [2]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#installation
@@ -41,49 +43,45 @@ url = "http://localhost:11434/api/chat"
 [4]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#themes
 [5]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#gruvbox
 [6]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#tokyo-night
+[7]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#roadmap
 
-## Features
+## 🔥 Features
 
-* Talk with **Ollama** AI models with style using GUI
-* Choose model from list or type your **own** model name
-* Save chat history to file
-* Clear chat history
-* Light and Dark modes
-* **Most important**, customize style of whole app with simple `JSON` file !
-* Its free and open source. Use the source code to customize the app even more !
+* ✏️ Talk with **Ollama** AI models with style using GUI.
+* 📂 Choose a model from the list or type your **own** model name.
+* 🔖 Save chat history to a file.
+* 💣 Clear chat history.
+* 🌓 Light and Dark modes.
+* 🌹 **Most important**, customize the style of the whole app with a simple `JSON` file !
+* 🎁 Its free and open-source. Use the source code to customize the app even more !
+* And **more** in development...
 
-## Installation
+## 👷 Installation
 
-* **Download** latest [release](https://github.com/tomteipl/Ollama-GUI-Chat/releases/latest)
-* **Extract** the archive
-* **Enjoy**
+>[!IMPORTANT]
+> You are required to have installed **[Ollama](https://ollama.com/)**.
+> Please refer to the official website for installation instructions.
+
+* **Download** the latest [release](https://github.com/tomteipl/Ollama-GUI-Chat/releases/latest).
+* **Extract** the archive.
+* **Enjoy!**
 
 >[!NOTE]
 >*`custom_theme.json` is located inside of `_internal/theme` folder.*
 
-## Customization
+## 💻 Customization
 
 ![OGC default colors photo](src/Ollama_default_colors1.png)
 
-You can customize style of the app by editing `custom-theme.json`.
-**OGC** is searching for `json` file in `_internal/theme` folder.
+You can customize the style of the app by editing `custom-theme.json`.
+**OGC** searches for the `json` file in the `_internal/theme/` folder.
 
-Part of `custom-theme.json` file:
+Part of the `custom-theme.json` file:
 
 ```json
 {
   "CTk": {
     "fg_color": ["#5c549f", "#000"]
-  },
-  "CTkToplevel": {
-    "fg_color": ["#5c549f", "#000"]
-  },
-  "CTkFrame": {
-    "corner_radius": 6,
-    "border_width": 0,
-    "fg_color": ["gray90", "gray13"],
-    "top_fg_color": ["gray85", "gray16"],
-    "border_color": ["gray65", "gray28"]
   },
   "CTkButton": {
     "corner_radius": 6,
@@ -100,15 +98,18 @@ Part of `custom-theme.json` file:
     "text_color": ["#FFFFFF", "#00ff04"]
 ```
 
-Its pretty easy and self explanatory. Just change the values
+>[!TIP]
+> Colors on the left are for **Light** theme, and on the right for **Dark** theme.
+
+Its pretty easy and self-explanatory. Just change the values
 and see the changes in the app.
 You can use `HEX` colors or `names` like `"green"`.
 
-Detailed usage of theme file you can find on
-official [CustomTkinter](https://customtkinter.tomschimansky.com/documentation/)
+Detailed usage of theme file can be found on
+the official [CustomTkinter](https://customtkinter.tomschimansky.com/documentation/)
 page.
 
-You can change the list of models directly in `OllamaGUIChat.py` file
+You can change the list of models directly in the `OllamaGUIChat.py` file
 
 ```python
 model_list = [
@@ -138,7 +139,7 @@ THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
 ctk.set_default_color_theme(THEME_PATH)
 ```
 
-## Themes (WIP)
+## 🎨 Themes (WIP)
 
 You can find more themes in **[themes](themes/)** folder.
 Each theme has light and dark mode.
@@ -153,3 +154,16 @@ Each theme has light and dark mode.
 ### Tokyo Night
 
 ![Tokyo Night Theme](src/Ollama-tokyo_night.png)
+
+## 📆 Roadmap
+
+Start: **27.03.2025**
+
+* **Host URL input**, let user enter custom URL.
+* **Load chat from file**
+* **Add stop button**
+* **Improve UI**
+
+## License
+
+This project is under the [**GPL-3.0**](LICENSE) license.
