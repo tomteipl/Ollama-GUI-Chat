@@ -2,7 +2,7 @@
     <h1> Ollama-GUI-Chat </h1>
 </div>
 
-![OGC default colors photo](src/Ollama_default_colors2.png)
+![OGC default colors photo](assets/Ollama_default_colors4.png)
 
 ![GitHub License](https://img.shields.io/github/license/tomteipl/Ollama-GUI-Chat?style=for-the-badge&logo=apache&logoSize=auto&labelColor=%235c549f&color=orange)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/tomteipl/Ollama-GUI-Chat?style=for-the-badge&logo=githubactions&logoColor=black&logoSize=auto&labelColor=%235c549f&color=orange)
@@ -67,7 +67,7 @@ there is inserted default URL.
 
 ## 💻 Customization
 
-![OGC default colors photo](src/Ollama_default_colors1.png)
+![OGC default colors photo](assets/Ollama_default_colors1.png)
 
 You can customize the style of the app by editing `custom-theme.json`.
 **OGC** searches for the `json` file in the `_internal/theme/` folder.
@@ -145,11 +145,11 @@ Each theme has light and dark mode.
 
 ### Gruvbox
 
-![Gruvbox Theme](src/Ollama_gruvbox.png)
+![Gruvbox Theme](assets/Ollama_gruvbox_1.png)
 
 ### Tokyo Night
 
-![Tokyo Night Theme](src/Ollama-tokyo_night.png)
+![Tokyo Night Theme](assets/Ollama-tokyo_night_1.png)
 
 ## 📆 Roadmap
 
