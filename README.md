@@ -159,7 +159,8 @@ Each theme has light and dark mode.
 
 Start: **27.03.2025**
 
-* **Host URL input**, let user enter custom URL.
+* [x] ~**Host URL input**, let user enter custom URL.~
+* [x] ~**Autoscroll**~
 * **Load chat from file**
 * **Add stop button**
 * **Improve UI**
