@@ -4,12 +4,11 @@ import json
 import customtkinter as ctk
 import os
 
-# TODO: Add `progressbar` to all jsons.
-# Fill README.md
-
-
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
+
+error_log = []
+model_list = []
 
 class GPLLicense(ctk.CTkToplevel):
     def __init__(self):
@@ -38,9 +37,19 @@ along with this program; if not, see <https://www.gnu.org/licenses/gpl-3.0.en.ht
         """,)
         self.label.grid(row=0, column=0, sticky="nsew", padx=10)
 
+class ErrorWindow(ctk.CTkToplevel):
+    def __init__(self):
+        super().__init__()
 
-error_log = []
-model_list = []
+        self.title("Error logs")
+        self.geometry("600x400")
+
+        self.error_output = ctk.CTkTextbox(self, height=390, width=590, cursor="arrow")
+        self.error_output.grid(row=0, column=0, padx=5, pady=5, sticky="nsew",)
+
+        error_lines = "\n\n".join(error_log)
+        self.error_output.insert("1.0", error_lines)
+        self.error_output.configure(wrap="word", state="disabled", font=("", 14))
 
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
@@ -59,6 +68,8 @@ class OllamaGUIChat(ctk.CTk):
         self.messages = []
         self.full_reply = ""
         self.gpl_opened = None
+        self.error_opened = None
+        self.response = None
 
         self.title("Ollama GUI Chat")
         self.geometry("800x800")
@@ -69,7 +80,6 @@ class OllamaGUIChat(ctk.CTk):
 
 
     def setup_ui(self):
-
 
         # top panel buttons
         top_frame = ctk.CTkFrame(self)
@@ -109,7 +119,7 @@ class OllamaGUIChat(ctk.CTk):
         self.chat_font_var.set(value="14")
         self.chat_output = ctk.CTkTextbox(self, height=600, cursor="arrow")
         self.chat_output.grid(row=1, columnspan=2, padx=5, pady=(5, 2), sticky="nsew",)
-        self.chat_output.insert("1.0", error_log)
+        #self.chat_output.insert("1.0", error_log)
         self.chat_output.configure(wrap="word", state="disabled", font=("", int(self.chat_font_var.get())))
 
         mid_frame = ctk.CTkFrame(self)
@@ -148,6 +158,8 @@ class OllamaGUIChat(ctk.CTk):
 
         self.progress_bar = ctk.CTkProgressBar(mid_frame2, mode="determinate",)
         self.progress_bar.configure(width=150,)
+
+        self.stop_button = ctk.CTkButton(mid_frame2, text="🛑", command=self.stop_response)
 
         # lower panel
         self.input_field = ctk.CTkTextbox(self, height=100)
@@ -208,7 +220,8 @@ class OllamaGUIChat(ctk.CTk):
                 self.chat_output.see("end")
 
         except Exception as e:
-            print(f"Error: {e}")
+            error_log.append(f"Error: {e}")
+            self.open_error_logs()
 
     def on_model_change(self, *args):
         self.messages = []
@@ -242,6 +255,14 @@ class OllamaGUIChat(ctk.CTk):
         else:
             self.gpl_opened.focus()
 
+    def open_error_logs(self):
+        if self.error_opened is None or not self.error_opened.winfo_exists():
+            self.error_opened = ErrorWindow()
+
+        else:
+            self.error_opened.destroy()
+            self.error_opened = ErrorWindow()
+
     def clear_chat(self):
         self.chat_output.configure(state="normal")
         self.messages = []
@@ -251,24 +272,56 @@ class OllamaGUIChat(ctk.CTk):
     def save_chat(self):
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
 
-        if file_path:
-            with open(file_path, "w", encoding="utf-8") as f:
-                for message in self.messages:
-                    f.write(f"{message['role']} : {message['content']}\n")
+        try:
+            if file_path:
+                with open(file_path, "w", encoding="utf-8") as f:
+                    for message in self.messages:
+                        f.write(f"{message['role']} : {message['content']}\n")
+
+        except Exception as e:
+            error_log.append(f"def save_chat: {e}")
+            self.open_error_logs()
 
     def load_chat(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
-        with open(file_path, "r", encoding="utf-8") as f:
-            for line in f.readlines():
-                self.messages.append({"role": "assistant", "content": line})
+
+        if not file_path:       # if you dont want to see an error each time you cancel loading - keep this intact
+           return
+
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                for line in f.readlines():
+                    self.messages.append({"role": "assistant", "content": line})
+
+        except Exception as e:
+            error_log.append(f"def load_chat: {e}")
+            self.open_error_logs()
+
+    def stop_response(self):
+        last_key = len(self.messages) - 1
+
+        if hasattr(self, "response") and self.response:
+            self.response.close()
+            del self.response
+            self.messages.pop(last_key)
+            self.insert_text("\n\n[AI] : Chat stopped.\n\n")
+
+        self.hide_progress()
+        self.send_button.configure(state="normal")
 
     def show_progress(self):
         self.progress_bar.grid(row=2, column=3, sticky="we")
         self.progress_bar.start()
 
+        self.stop_button.grid(row=2, column=4, sticky="we", padx=5)
+        self.stop_button.configure(height=10, width=10, corner_radius=5, border_width=2, state="normal")
+
     def hide_progress(self):
         self.progress_bar.stop()
         self.progress_bar.grid_forget()
+
+        self.stop_button.grid_forget()
+        self.stop_button.configure(state="disabled")
 
     # checks for installed LLMs.
     def check_existing_models(self) -> None:
@@ -284,8 +337,8 @@ class OllamaGUIChat(ctk.CTk):
             self.refresh_model_list()
 
         except requests.exceptions.RequestException as e:
-            print(f"Error while checking models: {e}")
-            self.insert_text(f"Error while checking models: {e}\n\n")
+            error_log.append(f"def check_existing_models: {e}")
+            self.open_error_logs()
 
     def send_message(self):
         question = self.input_field.get("1.0", "end").strip()
@@ -311,35 +364,46 @@ class OllamaGUIChat(ctk.CTk):
 
         try:
             response = requests.post(url, json=payload, stream=True)
+            self.response = response
 
             if response.status_code == 200:
                 self.insert_text("[AI] :\n")
+                self.show_progress()
                 #self.update()
 
                 # full_reply "", needed for AI to remember the context of messages.
                 # Without this, every new message is considered as new chat or whatever.
                 full_reply= ""
-                for line in response.iter_lines(decode_unicode=True):
-                    if line.strip():
-                        try:
-                            data = json.loads(line)
-                            content = data.get("message", {}).get("content", "")
-                            full_reply += content
-                            self.show_progress()
-                            self.insert_text(content)
-                            self.update()
+                try:
+                    for line in response.iter_lines(decode_unicode=True):
+                        if line.strip():
+                            try:
+                                data = json.loads(line)
+                                content = data.get("message", {}).get("content", "")
+                                full_reply += content
+                                self.insert_text(content)
+                                self.update()
 
-                        except json.JSONDecodeError:
-                            continue
+                            except json.JSONDecodeError:
+                                error_log.append(f"def send_message: {line}")
+                                self.open_error_logs()
+                                continue
 
-                self.messages.append({"role": "assistant", "content": full_reply})
-                self.insert_text("\n\n")
+                    self.messages.append({"role": "assistant", "content": full_reply})
+                    self.insert_text("\n\n")
+
+                # YES, IT WILL SCREAM AN ERROR EACH TIME YOU CANCEL THE CHAT.
+                except Exception as e:
+                    error_log.append(f"def send_message: {e}")
+                    #self.open_error_logs()     # Yes, thats why this is commented out. How would you feel if someone rips your tongue off mid-sentence?
 
             else:
-                self.insert_text(f"\nError: {response.status_code}\n{response.text}\n\n")
+                error_log.append(f"def send_message: {response.status_code}")
+                self.open_error_logs()
 
         except requests.exceptions.RequestException as e:
-            self.insert_text(f"\nError sending request: {e}\n\n")
+            error_log.append(f"def send_message: {e}")
+            self.open_error_logs()
 
         self.send_button.configure(state="normal")
         self.hide_progress()
