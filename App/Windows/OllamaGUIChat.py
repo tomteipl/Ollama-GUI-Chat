@@ -249,13 +249,13 @@ class OllamaGUIChat(ctk.CTk):
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
 
         if file_path:
-            with open(file_path, "w") as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 for message in self.messages:
                     f.write(f"{message['role']} : {message['content']}\n")
 
     def load_chat(self):
         file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
-        with open(file_path, "r") as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             for line in f.readlines():
                 self.messages.append({"role": "assistant", "content": line})
 
