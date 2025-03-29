@@ -82,7 +82,6 @@ class OllamaGUIChat(ctk.CTk):
 
     def setup_ui(self):
 
-
         # top panel buttons
         top_frame = ctk.CTkFrame(self)
         top_frame.grid(row=0, padx=5,pady=2, sticky="nswe")
@@ -133,15 +132,15 @@ class OllamaGUIChat(ctk.CTk):
 
         self.save_button = ctk.CTkButton(mid_frame, text="Save", command=self.save_chat)
         self.save_button.grid(row=2, column=0, padx=5,)
-        self.save_button.configure(height=10, width=15, corner_radius=5, hover_color="#024f04", border_width=2)
+        self.save_button.configure(height=10, width=45, corner_radius=5, hover_color="#024f04", border_width=2)
 
         self.load_button = ctk.CTkButton(mid_frame, text="Load", command=self.load_chat)
         self.load_button.grid(row=2, column=1, padx=(0,5),)
-        self.load_button.configure(height=10, width=15, corner_radius=5, hover_color="#1f538d", border_width=2)
+        self.load_button.configure(height=10, width=45, corner_radius=5, hover_color="#1f538d", border_width=2)
 
         self.clear_button = ctk.CTkButton(mid_frame, text="Clear", command=self.clear_chat)
         self.clear_button.grid(row=2, column=2, padx=(0,5),)
-        self.clear_button.configure(height=10, width=10, corner_radius=5, hover_color="#3b0103", border_width=2,)
+        self.clear_button.configure(height=10, width=45, corner_radius=5, hover_color="#3b0103", border_width=2)
 
         self.autoscroll_var = ctk.StringVar(value="on")
         self.autoscroll_box = ctk.CTkCheckBox(mid_frame2, text="Autoscroll", variable=self.autoscroll_var, onvalue="on", offvalue="off",)
@@ -170,7 +169,7 @@ class OllamaGUIChat(ctk.CTk):
 
         self.send_button = ctk.CTkButton(self, text="Send", command=self.send_message_thread)
         self.send_button.grid(row=3, column=1, sticky="we", padx=(0,5), pady=(5,5))
-        self.send_button.configure(height=100, width=10, corner_radius=5, border_width=2)
+        self.send_button.configure(height=100, width=45, corner_radius=5, border_width=2)
 
         self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 1.6.0")
         self.copyright_label.grid(sticky="se", row=4, column=0, columnspan=2, padx=5)
@@ -190,7 +189,7 @@ class OllamaGUIChat(ctk.CTk):
     def keybinds(self, event):
         if event.keysym == "Return" and not (event.state & 0x1):  # Enter
             if self.send_button.cget("state") == "normal":
-                self.send_message()
+                self.send_message_thread()
                 return "break"
 
         elif event.keysym == "Return" and (event.state & 0x1):  # Shift+Enter
