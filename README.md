@@ -138,7 +138,7 @@ Start: **27.03.2025**
 * [x] ~**Host URL input**, let user enter custom URL.~
 * [x] ~**Autoscroll**~
 * [x] ~**Load chat from file**~
-* 📌 **Add stop button** (WIP)
+* [x] ~**Add stop button**~
 * [x] ~**Add auto search for models**~
 * [x] ~**Add progress bar**~
 * **Improve UI**
