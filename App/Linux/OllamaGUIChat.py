@@ -115,18 +115,11 @@ class SelectTheme(ctk.CTkToplevel):
         if theme_name:
             ctk.set_default_color_theme(FILE_PATH)
             self.ogc_instance.destroy()
-            self.ogc_instance = OllamaGUIChat()
+            ollama_gui = OllamaGUIChat()
+            ollama_gui.mainloop()
 
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
-
-        #try:
-        #    ctk.set_default_color_theme(THEME_PATH)
-        #except Exception as e:
-        #    ctk.set_default_color_theme("blue")
-        #    print(f"Error: {e}")
-        #    error_log.append(f"Error while loading theme: {e}")
-        #    self.open_error_logs()
 
         super().__init__()
 
@@ -488,5 +481,3 @@ class OllamaGUIChat(ctk.CTk):
 ogc_instance = OllamaGUIChat()
 select_theme_window = SelectTheme(ogc_instance)
 select_theme_window.mainloop()
-#ollama_gui = OllamaGUIChat()
-#ollama_gui.mainloop()
