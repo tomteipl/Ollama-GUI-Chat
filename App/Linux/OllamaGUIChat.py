@@ -6,7 +6,9 @@ import os
 import threading as thr
 
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
-THEME_PATH: str = os.path.join(APP_PATH, "theme", "custom-theme.json")
+THEME_PATH: str = os.path.join(APP_PATH, "theme", "default.json")
+
+ctk.set_default_color_theme(THEME_PATH)
 
 error_log = []
 model_list = []
@@ -52,15 +54,79 @@ class ErrorWindow(ctk.CTkToplevel):
         self.error_output.insert("1.0", error_lines)
         self.error_output.configure(wrap="word", state="disabled", font=("", 14))
 
+class SelectTheme(ctk.CTkToplevel):
+    def __init__(self, ogc_instance):
+        super().__init__()
+
+        self.title("Select Theme")
+        self.geometry("500x275")
+        self.resizable(False, False)
+
+        top_frame = ctk.CTkFrame(self)
+        top_frame.grid(row=0, padx=5, pady=2, sticky="we")
+        top_frame.configure(fg_color="transparent")
+
+        self.button_1 = ctk.CTkButton(top_frame, text="Gruvbox", command=lambda: self.theme_file("gruvbox"))
+        self.button_1.grid(row=0, column=0,)
+        self.button_1.configure(font=("", 14), fg_color=["#d79921", "#b57614"],
+            hover_color=["#cc241d", "#9d0006"],
+            border_color=["#3c3836", "#ebdbb2"],
+            text_color=["#FFFFFF", "#FFFFFF"],
+            )
+        self.button_1_textbox = ctk.CTkTextbox(top_frame, cursor="arrow")
+        self.button_1_textbox.grid(row=0, column=1, sticky="we", pady=5)
+        self.button_1_textbox.insert("end" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
+        self.button_1_textbox.configure(height=80, width=350, state="disabled",
+            fg_color=["#ebdbb2", "#3c3836"],
+            border_color=["#3c3836", "#ebdbb2"],
+            text_color=["#282828", "#FFFFFF"],
+            )
+
+        self.button_2 = ctk.CTkButton(top_frame, text="Default", command=lambda: self.theme_file("default"))
+        self.button_2.grid(row=1, column=0)
+        self.button_2.configure(font=("", 14))
+        self.button_2_textbox = ctk.CTkTextbox(top_frame, cursor="arrow")
+        self.button_2_textbox.grid(row=1, column=1, sticky="we", pady=5)
+        self.button_2_textbox.insert("end" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
+        self.button_2_textbox.configure(height=80, width=350, state="disabled")
+
+        self.button_3 = ctk.CTkButton(top_frame, text="Tokyo Night", command=lambda: self.theme_file("tokyo_night"))
+        self.button_3.grid(row=2, column=0)
+        self.button_3.configure(font=("", 14),
+            fg_color=["#2959aa", "#7aa2f7"],
+            hover_color=["#8c4351", "#f7768e"],
+            border_color=["#5a3e8e", "#565f89"],
+            text_color=["#FFFFFF", "#24283b"],
+            )
+        self.button_3_textbox = ctk.CTkTextbox(top_frame, cursor="arrow")
+        self.button_3_textbox.grid(row=2, column=1, sticky="we", pady=5)
+        self.button_3_textbox.insert("end" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
+        self.button_3_textbox.configure(height=80, width=350, state="disabled",
+            fg_color=["#e6e7ed", "#414868"],
+            border_color=["#5a3e8e", "#565f89"],
+            text_color=["#5a3e8e", "#bb9af7"],
+            )
+
+        self.ogc_instance = ogc_instance
+
+    def theme_file(self, theme_name=None):
+        FILE_PATH: str = os.path.join(APP_PATH, "theme", f"{theme_name}.json")
+
+        if theme_name:
+            ctk.set_default_color_theme(FILE_PATH)
+            self.ogc_instance.destroy()
+            self.ogc_instance = OllamaGUIChat()
+
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
 
-        try:
-            ctk.set_default_color_theme(THEME_PATH)
-        except Exception as e:
-            ctk.set_default_color_theme("blue")
-            print(f"Error: {e}")
-            error_log.append(f"Error: {e}")
+        #try:
+        #    ctk.set_default_color_theme(THEME_PATH)
+        #except Exception as e:
+        #    ctk.set_default_color_theme("blue")
+        #    print(f"Error: {e}")
+        #    error_log.append(f"Error while loading theme: {e}")
+        #    self.open_error_logs()
 
         super().__init__()
 
@@ -419,5 +485,8 @@ class OllamaGUIChat(ctk.CTk):
             self.send_button.configure(state="normal")
             self.hide_progress()
 
-ollama_gui = OllamaGUIChat()
-ollama_gui.mainloop()
+ogc_instance = OllamaGUIChat()
+select_theme_window = SelectTheme(ogc_instance)
+select_theme_window.mainloop()
+#ollama_gui = OllamaGUIChat()
+#ollama_gui.mainloop()
