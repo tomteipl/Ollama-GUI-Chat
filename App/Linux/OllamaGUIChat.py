@@ -4,11 +4,40 @@ import json
 import customtkinter as ctk
 import os
 import threading as thr
+import configparser
 
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
-THEME_PATH: str = os.path.join(APP_PATH, "theme", "default.json")
+THEME_PATH: str = os.path.join(APP_PATH, "theme/")
 
-ctk.set_default_color_theme(THEME_PATH)
+settings = configparser.ConfigParser()
+settings_file_path = "settings.ini"
+
+try:
+    if os.path.exists(settings_file_path):
+        settings.read(settings_file_path)
+
+        try:
+            theme = settings["Settings"].get("theme")
+            ctk.set_default_color_theme(THEME_PATH + f"{theme}")
+
+        except KeyError as e:
+            print(f"Error settings.ini: {e}")
+            os.remove("settings.ini")
+            ctk.set_default_color_theme(THEME_PATH + "default.json")
+
+    else:
+        ctk.set_default_color_theme(THEME_PATH + "default.json")
+        settings["Settings"] = {
+            "theme": "default.json"
+        }
+
+        with open(settings_file_path, "w") as cf:
+            settings.write(cf)
+
+except Exception as e:
+    print(f"Error settings.ini: {e}")
+
+#ctk.set_default_color_theme(THEME_PATH)
 
 error_log = []
 model_list = []
@@ -19,6 +48,8 @@ class GPLLicense(ctk.CTkToplevel):
 
         self.title("GPL License")
         self.geometry("500x300")
+        self.resizable(False, False)
+        self.attributes("-topmost", True)
 
         self.label = ctk.CTkLabel(self, text="""
 Copyright (c) 2025 by Kamil Wiśniewski <tomteipl@gmail.com>
@@ -46,6 +77,7 @@ class ErrorWindow(ctk.CTkToplevel):
 
         self.title("Error logs")
         self.geometry("600x400")
+        self.attributes("-topmost", True)
 
         self.error_output = ctk.CTkTextbox(self, height=390, width=590, cursor="arrow")
         self.error_output.grid(row=0, column=0, padx=5, pady=5, sticky="nsew",)
@@ -55,18 +87,19 @@ class ErrorWindow(ctk.CTkToplevel):
         self.error_output.configure(wrap="word", state="disabled", font=("", 14))
 
 class SelectTheme(ctk.CTkToplevel):
-    def __init__(self, ogc_instance):
+    def __init__(self):
         super().__init__()
 
         self.title("Select Theme")
         self.geometry("500x275")
         self.resizable(False, False)
+        self.attributes("-topmost", True)
 
         top_frame = ctk.CTkFrame(self)
         top_frame.grid(row=0, padx=5, pady=2, sticky="we")
         top_frame.configure(fg_color="transparent")
 
-        self.button_1 = ctk.CTkButton(top_frame, text="Gruvbox", command=lambda: self.theme_file("gruvbox"))
+        self.button_1 = ctk.CTkButton(top_frame, text="Gruvbox", command=lambda: self.theme_file("gruvbox.json"))
         self.button_1.grid(row=0, column=0,)
         self.button_1.configure(font=("", 14), fg_color=["#d79921", "#b57614"],
             hover_color=["#cc241d", "#9d0006"],
@@ -82,15 +115,24 @@ class SelectTheme(ctk.CTkToplevel):
             text_color=["#282828", "#FFFFFF"],
             )
 
-        self.button_2 = ctk.CTkButton(top_frame, text="Default", command=lambda: self.theme_file("default"))
+        self.button_2 = ctk.CTkButton(top_frame, text="Default", command=lambda: self.theme_file("default.json"))
         self.button_2.grid(row=1, column=0)
-        self.button_2.configure(font=("", 14))
+        self.button_2.configure(font=("", 14),
+            fg_color=["#978dfd", "#191a19"],
+            hover_color=["#6f68bd", "#4b4d4b"],
+            border_color=["#3a3666", "#02b508"],
+            text_color=["#FFFFFF", "#00ff04"],
+            )
         self.button_2_textbox = ctk.CTkTextbox(top_frame, cursor="arrow")
         self.button_2_textbox.grid(row=1, column=1, sticky="we", pady=5)
         self.button_2_textbox.insert("end" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
-        self.button_2_textbox.configure(height=80, width=350, state="disabled")
+        self.button_2_textbox.configure(height=80, width=350, state="disabled",
+            fg_color=["#7d76d3", "#141414"],
+            border_color=["#3a3666", "#02b508"],
+            text_color=["#FFFFFF", "#00ff04"],
+            )
 
-        self.button_3 = ctk.CTkButton(top_frame, text="Tokyo Night", command=lambda: self.theme_file("tokyo_night"))
+        self.button_3 = ctk.CTkButton(top_frame, text="Tokyo Night", command=lambda: self.theme_file("tokyo_night.json"))
         self.button_3.grid(row=2, column=0)
         self.button_3.configure(font=("", 14),
             fg_color=["#2959aa", "#7aa2f7"],
@@ -107,20 +149,20 @@ class SelectTheme(ctk.CTkToplevel):
             text_color=["#5a3e8e", "#bb9af7"],
             )
 
-        self.ogc_instance = ogc_instance
-
     def theme_file(self, theme_name=None):
-        FILE_PATH: str = os.path.join(APP_PATH, "theme", f"{theme_name}.json")
-
         if theme_name:
-            ctk.set_default_color_theme(FILE_PATH)
-            self.ogc_instance.destroy()
-            ollama_gui = OllamaGUIChat()
-            ollama_gui.mainloop()
+            with open(settings_file_path, "w") as cf:
+                settings["Settings"] = {
+                    "theme": theme_name
+                }
+                settings.write(cf)
+        else:
+            print("Theme not selected")
+
+        self.destroy()
 
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
-
         super().__init__()
 
         ctk.set_appearance_mode("light")
@@ -129,6 +171,7 @@ class OllamaGUIChat(ctk.CTk):
         self.full_reply = ""
         self.gpl_opened = None
         self.error_opened = None
+        self.theme_opened = None
         self.response = None
 
         self.title("Ollama GUI Chat")
@@ -234,6 +277,10 @@ class OllamaGUIChat(ctk.CTk):
         self.copyright_label.grid(sticky="se", row=4, column=0, columnspan=2, padx=5)
         self.copyright_label.configure(font=("", 10))
 
+        self.settings_button = ctk.CTkButton(self, text="🛠️ Settings", command=self.open_theme_window)
+        self.settings_button.grid(row=4, column=0, padx=5, sticky="w")
+        self.settings_button.configure(height=10, width=10)
+
 
 
         # keybind
@@ -322,6 +369,14 @@ class OllamaGUIChat(ctk.CTk):
         else:
             self.error_opened.destroy()
             self.error_opened = ErrorWindow()
+
+    def open_theme_window(self):
+        if self.theme_opened is None or not self.theme_opened.winfo_exists():
+            self.theme_opened = SelectTheme()
+
+        else:
+            self.theme_opened.destroy()
+            self.theme_opened = None
 
     def clear_chat(self):
         self.chat_output.configure(state="normal")
@@ -478,6 +533,8 @@ class OllamaGUIChat(ctk.CTk):
             self.send_button.configure(state="normal")
             self.hide_progress()
 
-ogc_instance = OllamaGUIChat()
-select_theme_window = SelectTheme(ogc_instance)
-select_theme_window.mainloop()
+if __name__ == "__main__":
+    ogc_instance = OllamaGUIChat()
+    #select_theme_window = SelectTheme(ogc_instance)
+    #select_theme_window.mainloop()
+    ogc_instance.mainloop()
