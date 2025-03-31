@@ -141,8 +141,10 @@ Start: **27.03.2025**
 * [x] ~**Add stop button**~
 * [x] ~**Add auto search for models**~
 * [x] ~**Add progress bar**~
-* **Improve UI**
-* **Change theme handling**
+* [x] ~**Improve UI**~
+* [x] ~**Change theme handling**~
+
+Finished: **01.04.2025**
 
 ## License
 

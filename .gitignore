@@ -2,3 +2,5 @@
 App/build/
 App/dist/
 App/packing/
+App/Linux/*.ini
+App/Windows/*.ini

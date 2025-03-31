@@ -102,6 +102,7 @@ class ErrorWindow(ctk.CTkToplevel):
 
         self.title("Error logs")
         self.geometry("600x400")
+        self.resizable(False, False)
         self.attributes("-topmost", True)
 
         self.error_output = ctk.CTkTextbox(self, height=390, width=590, cursor="arrow")
