@@ -12,32 +12,57 @@ THEME_PATH: str = os.path.join(APP_PATH, "theme/")
 settings = configparser.ConfigParser()
 settings_file_path = "settings.ini"
 
-try:
-    if os.path.exists(settings_file_path):
-        settings.read(settings_file_path)
 
-        try:
+def set_settings():
+    try:
+        if os.path.exists(settings_file_path):
+            settings.read(settings_file_path)
+
             theme = settings["Settings"].get("theme")
-            ctk.set_default_color_theme(THEME_PATH + f"{theme}")
+            appearance = settings["Settings"].get("appearance")
 
-        except KeyError as e:
-            print(f"Error settings.ini: {e}")
-            os.remove("settings.ini")
+            try:
+                ctk.set_default_color_theme(THEME_PATH + f"{theme}")
+
+            except Exception as e:
+                print(f"Error while reading theme: {e}")
+                ctk.set_default_color_theme(THEME_PATH + "default.json")
+                settings["Settings"]["theme"] = "default.json"
+
+                with open(settings_file_path, "w") as cf:
+                    settings.write(cf)
+
+            try:
+                ctk.set_appearance_mode(appearance)
+
+            except Exception as e:
+                print(f"Error while reading appearance mode: {e}")
+                ctk.set_appearance_mode("light")
+                settings["Settings"]["appearance"] = "light"
+
+                with open(settings_file_path, "w") as cf:
+                    settings.write(cf)
+
+        else:
             ctk.set_default_color_theme(THEME_PATH + "default.json")
+            ctk.set_appearance_mode("light")
+            settings["Settings"] = {
+                "theme": "default.json",
+                "host": "http://localhost:11434",
+                "appearance": "light"
+            }
 
-    else:
-        ctk.set_default_color_theme(THEME_PATH + "default.json")
-        settings["Settings"] = {
-            "theme": "default.json"
-        }
+            with open(settings_file_path, "w") as cf:
+                settings.write(cf)
 
-        with open(settings_file_path, "w") as cf:
-            settings.write(cf)
+    except Exception as e:
+        print(f"Error settings.ini: {e}")
 
-except Exception as e:
-    print(f"Error settings.ini: {e}")
+set_settings()
 
-#ctk.set_default_color_theme(THEME_PATH)
+theme = settings["Settings"].get("theme")
+appearance = settings["Settings"].get("appearance")
+host = settings["Settings"].get("host")
 
 error_log = []
 model_list = []
@@ -91,7 +116,7 @@ class SelectTheme(ctk.CTkToplevel):
         super().__init__()
 
         self.title("Select Theme")
-        self.geometry("500x275")
+        self.geometry("500x330")
         self.resizable(False, False)
         self.attributes("-topmost", True)
 
@@ -148,13 +173,20 @@ class SelectTheme(ctk.CTkToplevel):
             border_color=["#5a3e8e", "#565f89"],
             text_color=["#5a3e8e", "#bb9af7"],
             )
+        
+        self.restart_label = ctk.CTkLabel(self, text="Restart after select!")
+        self.restart_label.grid(row=3, column=0, columnspan=2, sticky="nswe", pady=10)
+        self.restart_label.configure(font=("", 20))
 
     def theme_file(self, theme_name=None):
         if theme_name:
+            settings.read(settings_file_path)
+
+            if "Settings" not in settings:
+                settings["Settings"] = {}
+
+            settings["Settings"]["theme"] = theme_name
             with open(settings_file_path, "w") as cf:
-                settings["Settings"] = {
-                    "theme": theme_name
-                }
                 settings.write(cf)
         else:
             print("Theme not selected")
@@ -164,8 +196,6 @@ class SelectTheme(ctk.CTkToplevel):
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
         super().__init__()
-
-        ctk.set_appearance_mode("light")
 
         self.messages = []
         self.full_reply = ""
@@ -211,10 +241,10 @@ class OllamaGUIChat(ctk.CTk):
         self.host_url = ctk.CTkEntry(top_frame2)
         self.host_url.grid(row=0, column=0, padx=(20,3), sticky="e")
         self.host_url.configure(height=20, width=230, font=("", 12), placeholder_text="Host URL...")
-        self.host_url.insert(0 ,"http://localhost:11434")
+        self.host_url.insert(0 , host)
 
-        self.theme_var = ctk.StringVar(value="off")
-        self.theme_switch = ctk.CTkSwitch(top_frame2, text="light/dark mode", variable=self.theme_var, onvalue="on", offvalue="off", command=self.theme_modes,)
+        self.theme_var = ctk.StringVar(value=appearance)
+        self.theme_switch = ctk.CTkSwitch(top_frame2, text="light/dark mode", variable=self.theme_var, onvalue="dark", offvalue="light", command=self.theme_modes,)
         self.theme_switch.grid(row=0, column=1, padx=(0,5), sticky="e")
 
         # mid panel
@@ -273,11 +303,11 @@ class OllamaGUIChat(ctk.CTk):
         self.send_button.grid(row=3, column=1, sticky="we", padx=(0,5), pady=(5,5))
         self.send_button.configure(height=100, width=10, corner_radius=5, border_width=2)
 
-        self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 1.6.0")
+        self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 1.7.0")
         self.copyright_label.grid(sticky="se", row=4, column=0, columnspan=2, padx=5)
         self.copyright_label.configure(font=("", 10))
 
-        self.settings_button = ctk.CTkButton(self, text="🛠️ Settings", command=self.open_theme_window)
+        self.settings_button = ctk.CTkButton(self, text="🛠️ Change theme", command=self.open_theme_window)
         self.settings_button.grid(row=4, column=0, padx=5, sticky="w")
         self.settings_button.configure(height=10, width=10)
 
@@ -285,9 +315,11 @@ class OllamaGUIChat(ctk.CTk):
 
         # keybind
         self.custom_model_name.bind("<Return>", self.custom_model)
+        self.custom_model_name.bind("<Control-a>", self.keybinds)
         self.input_field.bind("<Control-a>", self.keybinds)
         self.input_field.bind("<Return>", self.keybinds)
         self.host_url.bind("<Return>", self.check_existing_models)
+        self.host_url.bind("<Control-a>", self.keybinds)
 
         self.check_existing_models()
 
@@ -303,8 +335,19 @@ class OllamaGUIChat(ctk.CTk):
             return "break"
 
         elif event.keysym.lower() == "a" and (event.state & 0x4):  # Ctrl+A
-            self.input_field.tag_add("sel", "1.0", "end")
-            return "break"
+            widget = event.widget
+            if widget == self.input_field._textbox:
+                widget.tag_add("sel", "1.0", "end")
+                return "break"
+            
+            elif widget == self.host_url._entry:
+                widget.select_range(0, "end")
+                return "break"
+            
+            elif widget == self.custom_model_name._entry:
+                widget.select_range(0, "end")
+            
+        return "break"
 
     def change_font_size(self, increment):
         font_size = int(self.chat_font_var.get()) + increment
@@ -349,11 +392,18 @@ class OllamaGUIChat(ctk.CTk):
         self.model_menu.configure(values=model_list)
 
     def theme_modes(self):
-        if self.theme_var.get() == "on":
+        if self.theme_var.get() == "dark":
             ctk.set_appearance_mode("dark")
-
+            settings.read(settings_file_path)
+            settings["Settings"]["appearance"] = "dark"
+            with open(settings_file_path, "w") as cf:
+                settings.write(cf)
         else:
             ctk.set_appearance_mode("light")
+            settings.read(settings_file_path)
+            settings["Settings"]["appearance"] = "light"
+            with open(settings_file_path, "w") as cf:
+                settings.write(cf)
 
     def open_gpl(self):
         if self.gpl_opened is None or not self.gpl_opened.winfo_exists():
@@ -451,6 +501,13 @@ class OllamaGUIChat(ctk.CTk):
             self.model_menu_var.set(model_list[0])
             self.refresh_model_list()
 
+            api_url = self.host_url.get()
+            settings.read(settings_file_path)
+            settings["Settings"]["host"] = api_url
+
+            with open(settings_file_path, "w") as cf:
+                settings.write(cf)
+
         except requests.exceptions.RequestException as e:
             model_list.clear()
             self.model_menu_var.set("")
@@ -535,6 +592,4 @@ class OllamaGUIChat(ctk.CTk):
 
 if __name__ == "__main__":
     ogc_instance = OllamaGUIChat()
-    #select_theme_window = SelectTheme(ogc_instance)
-    #select_theme_window.mainloop()
     ogc_instance.mainloop()
