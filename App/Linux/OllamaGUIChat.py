@@ -33,7 +33,7 @@ def set_settings():
                     settings.write(cf)
 
             try:
-                ctk.set_appearance_mode(appearance)
+                ctk.set_appearance_mode(str(appearance))
 
             except Exception as e:
                 print(f"Error while reading appearance mode: {e}")
@@ -304,7 +304,7 @@ class OllamaGUIChat(ctk.CTk):
         self.send_button.grid(row=3, column=1, sticky="we", padx=(0,5), pady=(5,5))
         self.send_button.configure(height=100, width=10, corner_radius=5, border_width=2)
 
-        self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 1.7.0")
+        self.copyright_label = ctk.CTkLabel(self, text="Copyright © 2025 by Kamil Wiśniewski | Ver. 2.0.0")
         self.copyright_label.grid(sticky="se", row=4, column=0, columnspan=2, padx=5)
         self.copyright_label.configure(font=("", 10))
 
