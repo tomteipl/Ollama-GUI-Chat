@@ -31,6 +31,7 @@ there is inserted default URL.
 * **[Themes][5]**
   * [Gruvbox][6]
   * [Tokyo Night][7]
+  * [Nordic][9]
 * **[Roadmap][8]**
 * **[License](LICENSE)**
 
@@ -42,6 +43,7 @@ there is inserted default URL.
 [6]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#gruvbox
 [7]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#tokyo-night
 [8]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#roadmap
+[9]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#nordic
 
 ## 🔥 Features
 
@@ -190,7 +192,7 @@ You can find more themes in **[themes](themes/)** folder.
 Each theme has light and dark mode.
 
 >[!NOTE]
->Default themes are included in the release file.
+>`Gruvbox.json`, `Tokyo-Night.json` and `default.json` themes are included in the release file.
 
 ### Gruvbox
 
@@ -199,6 +201,12 @@ Each theme has light and dark mode.
 ### Tokyo Night
 
 ![Tokyo Night Theme](assets/Ollama_tokyo_night_both.png)
+
+### Nordic
+
+[Download](https://github.com/tomteipl/Ollama-GUI-Chat/blob/main/themes/nordic.json)
+
+![Nordic theme](assets/Ollama_nordic_3.png)
 
 ## 📆 Roadmap
 
