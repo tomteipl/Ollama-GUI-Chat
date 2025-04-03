@@ -5,6 +5,7 @@ import customtkinter as ctk
 import os
 import threading as thr
 import configparser
+import glob
 
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme/")
@@ -66,6 +67,7 @@ host = settings["Settings"].get("host")
 
 error_log = []
 model_list = []
+themes_files = []
 
 class GPLLicense(ctk.CTkToplevel):
     def __init__(self):
@@ -117,12 +119,12 @@ class SelectTheme(ctk.CTkToplevel):
         super().__init__()
 
         self.title("Select Theme")
-        self.geometry("500x330")
+        self.geometry("500x400")
         self.resizable(False, False)
         self.attributes("-topmost", True)
 
         top_frame = ctk.CTkFrame(self)
-        top_frame.grid(row=0, padx=5, pady=2, sticky="we")
+        top_frame.grid(row=1, padx=5, pady=2, sticky="nswe")
         top_frame.configure(fg_color="transparent")
 
         self.button_1 = ctk.CTkButton(top_frame, text="Gruvbox", command=lambda: self.theme_file("gruvbox.json"))
@@ -175,9 +177,39 @@ class SelectTheme(ctk.CTkToplevel):
             text_color=["#5a3e8e", "#bb9af7"],
             )
         
-        self.restart_label = ctk.CTkLabel(self, text="Restart after select!")
-        self.restart_label.grid(row=3, column=0, columnspan=2, sticky="nswe", pady=10)
+        self.restart_label = ctk.CTkLabel(top_frame, text="Restart after select!")
+        self.restart_label.grid(row=3, column=0, columnspan=2, sticky="we", pady=10)
         self.restart_label.configure(font=("", 20))
+
+        menu_frame = ctk.CTkFrame(self)
+        menu_frame.grid(row=0, sticky="nw", pady=(5,15), padx=5)
+        menu_frame.configure(fg_color="transparent")
+
+        self.fetch_themes()
+        self.themes_list_var = ctk.StringVar(value=themes_files[0])
+        self.themes_list_var.trace_add("write", lambda *args: self.theme_file(self.themes_list_var.get()))
+        self.themes_list = ctk.CTkOptionMenu(menu_frame, variable=self.themes_list_var, values=themes_files,)
+        self.themes_list.grid(row=0, column=0, sticky="w")
+        self.themes_list.configure(dynamic_resizing=True)
+
+        self.theme_label = ctk.CTkLabel(menu_frame, text="<-- Check for custom themes.")
+        self.theme_label.grid(row=0, column=1, sticky="w", padx=5)
+        self.theme_label.configure(font=("", 13))
+
+        self.selected_label = ctk.CTkLabel(self, text="Selected theme: ")
+        self.selected_label.grid(row=4, column=0, sticky="sw", padx=5)
+
+    def fetch_themes(self):
+        folder = glob.glob(APP_PATH + "/theme/*.json")
+        file_names = [os.path.split(path)[1] for path in folder]
+        themes_files.clear()
+        try:
+            for f in file_names:
+                themes_files.append(f)
+                themes_files.sort()
+
+        except IndexError as e:
+            error_log.append(f"Themes fetch error: {e}")
 
     def theme_file(self, theme_name=None):
         if theme_name:
@@ -189,10 +221,11 @@ class SelectTheme(ctk.CTkToplevel):
             settings["Settings"]["theme"] = theme_name
             with open(settings_file_path, "w") as cf:
                 settings.write(cf)
+
         else:
             print("Theme not selected")
 
-        self.destroy()
+        self.selected_label.configure(text=f"Selected theme: {theme_name}")
 
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):

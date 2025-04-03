@@ -89,6 +89,9 @@ appearance = light
 * `[theme]` = `...`, this value will change depending on the
 theme picked from the *Change theme* button.
 
+**NEW FEATURE**: In theme selection window, now you
+have a new **dropdown menu** that shows your custom themes.
+
 ![theme button](assets/change_theme_1.png)
 
 Or:
