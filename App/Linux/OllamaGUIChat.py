@@ -6,6 +6,7 @@ import os
 import threading as thr
 import configparser
 import glob
+from time import sleep
 
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme/")
@@ -119,7 +120,7 @@ class SelectTheme(ctk.CTkToplevel):
         super().__init__()
 
         self.title("Select Theme")
-        self.geometry("500x400")
+        self.geometry("500x440")
         self.resizable(False, False)
         self.attributes("-topmost", True)
 
@@ -182,7 +183,7 @@ class SelectTheme(ctk.CTkToplevel):
         self.restart_label.configure(font=("", 20))
 
         menu_frame = ctk.CTkFrame(self)
-        menu_frame.grid(row=0, sticky="nw", pady=(5,15), padx=5)
+        menu_frame.grid(row=0, sticky="nwse", pady=(30,15), padx=5)
         menu_frame.configure(fg_color="transparent")
 
         self.fetch_themes()
@@ -192,12 +193,10 @@ class SelectTheme(ctk.CTkToplevel):
         self.themes_list.grid(row=0, column=0, sticky="w")
         self.themes_list.configure(dynamic_resizing=True)
 
-        self.theme_label = ctk.CTkLabel(menu_frame, text="👈 Check for custom themes.")
-        self.theme_label.grid(row=0, column=1, sticky="w", padx=5)
-        self.theme_label.configure(font=("", 13))
-
         self.selected_label = ctk.CTkLabel(self, text="Selected theme: ")
         self.selected_label.grid(row=4, column=0, sticky="sw", padx=5)
+
+        self.rebuild_theme_list_textbox()
 
     def fetch_themes(self):
         folder = glob.glob(APP_PATH + "/theme/*.json")
@@ -222,10 +221,25 @@ class SelectTheme(ctk.CTkToplevel):
             with open(settings_file_path, "w") as cf:
                 settings.write(cf)
 
+            ctk.set_default_color_theme(THEME_PATH + theme_name)
+            self.themes_list_textbox.destroy()
+            self.rebuild_theme_list_textbox()
+
+
         else:
             print("Theme not selected")
 
         self.selected_label.configure(text=f"Selected theme: {theme_name}")
+
+    def rebuild_theme_list_textbox(self):
+        menu_frame = ctk.CTkFrame(self)
+        menu_frame.grid(row=0, sticky="e", padx=5)
+        menu_frame.configure(fg_color="transparent")
+
+        self.themes_list_textbox = ctk.CTkTextbox(menu_frame, cursor="arrow")
+        self.themes_list_textbox.grid(row=0, column=1, sticky="we", pady=5)
+        self.themes_list_textbox.insert("end" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
+        self.themes_list_textbox.configure(height=80, width=350, state="disabled",)
 
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
