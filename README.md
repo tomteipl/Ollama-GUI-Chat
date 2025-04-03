@@ -32,6 +32,8 @@ there is inserted default URL.
   * [Gruvbox][6]
   * [Tokyo Night][7]
   * [Nordic][8]
+  * [Catppuccin-mocha][9]
+  * [Solarized-Osaka][10]
 * **[License](LICENSE)**
 
 [1]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#features
@@ -42,6 +44,8 @@ there is inserted default URL.
 [6]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#gruvbox
 [7]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#tokyo-night
 [8]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#nordic
+[9]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#catppuccin-mocha
+[10]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#solarized-osaka
 
 ## 🔥 Features
 
@@ -209,6 +213,18 @@ Each theme has light and dark mode.
 
 ![Nordic theme](assets/Ollama_nordic_3.png)
 
-### License
+### Catppuccin-mocha
+
+[Download](https://github.com/tomteipl/Ollama-GUI-Chat/blob/main/themes/catppuccin-mocha.json)
+
+![Catppuccin-mocha](assets/Ollama_catppuccin_mocha_3.png)
+
+### Solarized-Osaka
+
+[Download](https://github.com/tomteipl/Ollama-GUI-Chat/blob/main/themes/solarized-osaka.json)
+
+![Solarized-Osaka](assets/Ollama_solarized_osaka_3.png)
+
+## License
 
 This project is under the [**GPL-3.0**](LICENSE) license.

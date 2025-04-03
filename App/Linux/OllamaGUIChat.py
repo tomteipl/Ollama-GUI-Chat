@@ -6,7 +6,6 @@ import os
 import threading as thr
 import configparser
 import glob
-from time import sleep
 
 APP_PATH: str = os.path.dirname(os.path.realpath(__file__))
 THEME_PATH: str = os.path.join(APP_PATH, "theme/")
@@ -177,7 +176,7 @@ class SelectTheme(ctk.CTkToplevel):
             border_color=["#5a3e8e", "#565f89"],
             text_color=["#5a3e8e", "#bb9af7"],
             )
-        
+
         self.restart_label = ctk.CTkLabel(top_frame, text="Restart after select!")
         self.restart_label.grid(row=3, column=0, columnspan=2, sticky="we", pady=10)
         self.restart_label.configure(font=("", 20))
@@ -191,7 +190,7 @@ class SelectTheme(ctk.CTkToplevel):
         self.themes_list_var.trace_add("write", lambda *args: self.theme_file(self.themes_list_var.get()))
         self.themes_list = ctk.CTkOptionMenu(menu_frame, variable=self.themes_list_var, values=themes_files,)
         self.themes_list.grid(row=0, column=0, sticky="w")
-        self.themes_list.configure(dynamic_resizing=True)
+        self.themes_list.configure(dynamic_resizing=False)
 
         self.selected_label = ctk.CTkLabel(self, text="Selected theme: ")
         self.selected_label.grid(row=4, column=0, sticky="sw", padx=5)
@@ -386,14 +385,14 @@ class OllamaGUIChat(ctk.CTk):
             if widget == self.input_field._textbox:
                 widget.tag_add("sel", "1.0", "end")
                 return "break"
-            
+
             elif widget == self.host_url._entry:
                 widget.select_range(0, "end")
                 return "break"
-            
+
             elif widget == self.custom_model_name._entry:
                 widget.select_range(0, "end")
-            
+
         return "break"
 
     def change_font_size(self, increment):
