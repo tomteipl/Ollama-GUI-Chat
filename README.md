@@ -31,8 +31,7 @@ there is inserted default URL.
 * **[Themes][5]**
   * [Gruvbox][6]
   * [Tokyo Night][7]
-  * [Nordic][9]
-* **[Roadmap][8]**
+  * [Nordic][8]
 * **[License](LICENSE)**
 
 [1]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#features
@@ -42,8 +41,7 @@ there is inserted default URL.
 [5]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#themes
 [6]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#gruvbox
 [7]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#tokyo-night
-[8]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#roadmap
-[9]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#nordic
+[8]: https://github.com/tomteipl/Ollama-GUI-Chat?tab=readme-ov-file#nordic
 
 ## 🔥 Features
 
@@ -211,23 +209,6 @@ Each theme has light and dark mode.
 
 ![Nordic theme](assets/Ollama_nordic_3.png)
 
-## 📆 Roadmap
-
-Start: **27.03.2025**
-
-*Part 1:*
-
-* [x] ~**Host URL input**, let user enter custom URL.~
-* [x] ~**Autoscroll**~
-* [x] ~**Load chat from file**~
-* [x] ~**Add stop button**~
-* [x] ~**Add auto search for models**~
-* [x] ~**Add progress bar**~
-* [x] ~**Improve UI**~
-* [x] ~**Change theme handling**~
-
-Finished: 💥**01.04.2025**💥
-
-## License
+### License
 
 This project is under the [**GPL-3.0**](LICENSE) license.
