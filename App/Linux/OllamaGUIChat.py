@@ -240,6 +240,17 @@ class SelectTheme(ctk.CTkToplevel):
         self.themes_list_textbox.insert("end" ,"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
         self.themes_list_textbox.configure(height=80, width=350, state="disabled",)
 
+class TabView(ctk.CTkTabview):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.add("Tab 1")
+        self.add("Tab 2")
+        self.add("Tab 3")
+
+        self.tab("Tab 1").grid_columnconfigure(0, weight=1)
+        self.tab("Tab 1").grid_rowconfigure(0, weight=1)
+
 class OllamaGUIChat(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -296,8 +307,14 @@ class OllamaGUIChat(ctk.CTk):
         # mid panel
         self.chat_font_var = ctk.StringVar()
         self.chat_font_var.set(value="14")
-        self.chat_output = ctk.CTkTextbox(self, height=600, cursor="arrow")
-        self.chat_output.grid(row=1, columnspan=2, padx=5, pady=(5, 2), sticky="nsew",)
+
+
+        tabview = TabView(self)
+        tabview.grid(row=1, columnspan=2, padx=5, pady=(5, 2), sticky="nsew")
+        tabview.configure(anchor="nw")
+
+        self.chat_output = ctk.CTkTextbox(master=tabview.tab("Tab 1"),cursor="arrow")
+        self.chat_output.grid(sticky="nsew",)
         self.chat_output.configure(wrap="word", state="disabled", font=("", int(self.chat_font_var.get())))
 
         mid_frame = ctk.CTkFrame(self)
@@ -356,6 +373,9 @@ class OllamaGUIChat(ctk.CTk):
         self.settings_button = ctk.CTkButton(self, text="🛠️ Change theme", command=self.open_theme_window)
         self.settings_button.grid(row=4, column=0, padx=5, sticky="w")
         self.settings_button.configure(height=10, width=10)
+
+        #self.tab_view = TabView(master=self)
+        #self.tab_view.grid(row=5, column=0)
 
 
 
